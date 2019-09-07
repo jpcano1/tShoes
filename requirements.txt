@@ -2,7 +2,6 @@
 pytz>=2018.7
 python-slugify>=1.2.6
 Pillow>=5.3.0
-psycopg2>=2.7.4 --no-binary psycopg2
 
 # Django
 django>=2.1
@@ -22,3 +21,12 @@ whitenoise>=4.1.2
 
 # JWT Library
 python-jose>=1.7.1
+
+# CORS Headers
+django-cors-headers>=3.0.2
+
+# Postgresql connection
+psycopg2>=2.8.3
+
+# Anymail
+django-anymail[mailgun] >= 6.1.0
