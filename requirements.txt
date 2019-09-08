@@ -5,8 +5,7 @@ Pillow>=5.3.0
 
 # Django
 django>=2.1
-django-filters>=0.2.1
-
+django-filters
 # Environment
 django-environ>=0.4.5
 
