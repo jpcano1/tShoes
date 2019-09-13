@@ -41,7 +41,7 @@ class User(AbstractUser, TShoesModel):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'identification']
 
     def __str__(self):
         """ String function """
