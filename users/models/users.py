@@ -12,14 +12,28 @@ class User(AbstractUser, TShoesModel):
      Extends from django's abstract base user
      """
 
+    # The email for each user in the plaform
     email = models.EmailField(
         'email address',
         unique=True,
         error_messages={
-            'unique': 'Auser with that email already exists'
+            'unique': 'A user with that email already exists'
         }
     )
 
+    # The identity for the user of the platform
+    identification = models.CharField(
+        'Identification document',
+        max_length=255,
+        unique=True,
+        error_messages={
+            'unique': "A user with that id already exists"
+        },
+        primary_key=True
+    )
+
+    # Boolean that verifies the user is verified
+    # in the platform
     is_verified = models.BooleanField(
         'verified',
         default=False,
@@ -31,7 +45,7 @@ class User(AbstractUser, TShoesModel):
 
     def __str__(self):
         """ String function """
-        return "{} - email: {}".format(self.username, self.email)
+        return "{} - email: {} - identification: {}".format(self.username, self.email, self.identification)
 
     def get_short_name(self):
         """ Returns username """
