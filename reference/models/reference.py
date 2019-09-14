@@ -10,9 +10,18 @@ from utils.models import TShoesModel
 class Reference(TShoesModel, models.Model):
     """ Reference Model """
 
-    reference = models.CharField(max_length=255, default=None)
+    #
+    reference_name = models.CharField(max_length=255, default=None)
+
+    #
     inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE, related_name='Inventory')
+
+    #
+    min_stock = models.PositiveIntegerField()
+
+    #
+    max_stock = models.PositiveIntegerField()
 
     def __str__(self):
         """ String function """
-        return "Reference: {} from inventory: {}".format(self.reference, str(self.inventory))
+        return "Reference: {} from inventory: {}".format(self.reference_name, str(self.inventory))
