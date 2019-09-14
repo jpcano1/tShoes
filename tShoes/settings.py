@@ -26,12 +26,12 @@ SECRET_KEY = 'hcq&(jt)gu1p12__y*n_j012c4zi*ffq8$s_&n8oyfcdhu@k8m'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-        "localhost", 
-        "127.0.0.1", 
-        "192.168.0.10", 
-        "0.0.0.0",
-        "3.88.140.100"
-        ]
+    "localhost",
+    "127.0.0.1",
+    "192.168.0.10",
+    "0.0.0.0",
+    "3.88.140.100"
+]
 
 # Users and authentication
 AUTH_USER_MODEL = 'users.User'
