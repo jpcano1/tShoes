@@ -9,3 +9,5 @@ class Customer(User, models.Model):
         Model from tShoes.
     """
 
+    billing_adress = models.CharField(max_length=255, default=None)
+

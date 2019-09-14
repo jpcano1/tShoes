@@ -17,10 +17,10 @@ class Reference(TShoesModel, models.Model):
     inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE, related_name='Inventory')
 
     #
-    min_stock = models.PositiveIntegerField()
+    min_stock = models.PositiveIntegerField(default=0)
 
     #
-    max_stock = models.PositiveIntegerField()
+    max_stock = models.PositiveIntegerField(default=None)
 
     def __str__(self):
         """ String function """
