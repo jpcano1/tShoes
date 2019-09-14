@@ -5,7 +5,10 @@ from django.db import models
 from utils.models import TShoesModel
 
 class Order(TShoesModel, models.Model):
-    """ Class that represents the order model
+    """
+        Class that represents the order model
     """
 
-    references = models.ManyToManyField('reference.Reference', through='reference.Item', through_fields=('order', 'reference'))
+    references = models.ManyToManyField('reference.Reference',
+                                        through='reference.Item',
+                                        through_fields=('order', 'reference'))
