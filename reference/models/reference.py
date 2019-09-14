@@ -7,6 +7,9 @@ from inventory.models import Inventory
 # Utils models
 from utils.models import TShoesModel
 
+# Order models
+from order.models import Order
+
 class Reference(TShoesModel, models.Model):
     """ Reference Model """
 

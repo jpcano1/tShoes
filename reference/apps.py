@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
-
-class ReferenceConfig(AppConfig):
-    name = 'reference'
+class ReferenceAppConfig(AppConfig):
+    name = 'tShoes.reference'
+    verbose_name = "References"

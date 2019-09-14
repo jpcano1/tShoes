@@ -5,10 +5,7 @@ from django.db import models
 from utils.models import TShoesModel
 
 # Reference models
-from reference.models import Reference
-
-# Order models
-from order.models import Order
+from .reference import Reference
 
 class Item(TShoesModel, models.Model):
     """ Class that represents the Item models
@@ -25,4 +22,4 @@ class Item(TShoesModel, models.Model):
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE)
 
     # Attibute that models the order of shoes
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey('order.Order', on_delete=models.CASCADE)
