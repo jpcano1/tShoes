@@ -25,6 +25,7 @@ SECRET_KEY = 'hcq&(jt)gu1p12__y*n_j012c4zi*ffq8$s_&n8oyfcdhu@k8m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Allowed hosts that can make requests
 ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
