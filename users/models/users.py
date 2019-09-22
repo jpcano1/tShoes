@@ -40,6 +40,14 @@ class User(AbstractUser, TShoesModel):
         help_text='Set to true when the user is verified'
     )
 
+    # Boolean that verifies the user ID is verified
+    # in the platform
+    verified_id = models.BooleanField(
+        'Verified Identification',
+        default=False,
+        help_text="Set to true when the user's ID is verified"
+    )
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'identification']
 
