@@ -93,13 +93,13 @@ WSGI_APPLICATION = 'tShoes.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        # 'NAME': 'tShoes',
-        # 'USER': 'admin',
-        # 'PASSWORD': 'tSh03s2503',
-        # 'HOST': '3.88.140.100',
-        # 'PORT': '5432'
+        'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'tshoes-db',
+        'USER': 'jpcano1',
+        'PASSWORD': 'tSh03s2503',
+        'HOST': 'tshoes-db.postgres.database.azure.com',
+        'PORT': '5432'
     }
 }
 
