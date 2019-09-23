@@ -25,7 +25,14 @@ SECRET_KEY = 'hcq&(jt)gu1p12__y*n_j012c4zi*ffq8$s_&n8oyfcdhu@k8m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.0.10", "0.0.0.0"]
+# Allowed hosts that can make requests
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "192.168.0.10",
+    "0.0.0.0",
+    "3.88.140.100"
+]
 
 # Users and authentication
 AUTH_USER_MODEL = 'users.User'
@@ -94,9 +101,8 @@ WSGI_APPLICATION = 'tShoes.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME': 'tshoes-db',
-        'USER': 'jpcano1',
+        'NAME': 'tshoes',
+        'USER': 'jpcano1@tshoes-db',
         'PASSWORD': 'tSh03s2503',
         'HOST': 'tshoes-db.postgres.database.azure.com',
         'PORT': '5432'
@@ -128,7 +134,8 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:4200",
     "http://127.0.0.1:8080",
     "http://192.168.0.10:8080",
-    "https://localhost:8080"
+    "https://localhost:8080",
+    "http://3.88.140.100:8000"
 )
 
 # Internationalization
