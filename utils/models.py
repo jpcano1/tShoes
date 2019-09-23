@@ -30,3 +30,17 @@ class TShoesModel(models.Model):
 
         get_latest_by = 'created'
         ordering = ['-created', '-modified']
+
+class RatingModel(TShoesModel):
+    """ Rating model """
+
+    rating = models.FloatField(default=1.0)
+    comments = models.TextField(blank=True)
+
+    class Meta:
+        """ Class Name """
+
+        abstract = True
+
+        get_latest_by = 'created'
+        ordering = ['-created', '-modified']

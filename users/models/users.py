@@ -63,6 +63,20 @@ class User(AbstractUser, TShoesModel):
         help_text="Set to true when the user's ID is verified"
     )
 
+    # Users profile picture
+    profile_picture = models.ImageField(
+        'Profile Image',
+        upload_to='users/pictures',
+        blank=True,
+        null=True
+    )
+
+    # User's bio
+    biography = models.CharField(max_length=255, blank=True)
+
+    # The resputation of the user, doesn't matters if it's customer, designer etc...
+    reputation = models.FloatField(default=None)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'identification']
 
