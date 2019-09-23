@@ -31,14 +31,6 @@ class UserSignUpSerializer(serializers.Serializer):
         ]
     )
 
-    username = serializers.CharField(
-        min_length=4,
-        max_length=20,
-        validators=[
-            UniqueValidator(queryset=User.objects.all())
-        ]
-    )
-
     phone_regex = RegexValidator(
         regex=r'^(\(?\+?[0-9]*\)?)?[0-9_\- \(\)]*$',
         message='Invalid phone number format'
@@ -83,3 +75,16 @@ class UserSignUpSerializer(serializers.Serializer):
         }
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
         return token
+
+class UserModelSerializer(serializers.ModelSerializer):
+    """ This class respresents the user model serializer """
+
+    class Meta:
+        """ Meta class """
+        model = User
+        fields = ('id',
+                  'first_name',
+                  'last_name',
+                  'email',
+                  'phone_number',
+                  )
