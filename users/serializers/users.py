@@ -25,17 +25,27 @@ class UserSignUpSerializer(serializers.Serializer):
         verification token to the user through the email.
     """
 
+    # Email field
     email = serializers.EmailField(
         validators=[
             UniqueValidator(queryset=User.objects.all())
         ]
     )
 
+    # Identification field
+    identification = serializers.CharField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+
+    # Phone regular expression
     phone_regex = RegexValidator(
         regex=r'^(\(?\+?[0-9]*\)?)?[0-9_\- \(\)]*$',
         message='Invalid phone number format'
     )
 
+    # phone number field
     phone_number = serializers.CharField(min_length=8, max_length=64)
 
     # Password
@@ -87,4 +97,5 @@ class UserModelSerializer(serializers.ModelSerializer):
                   'last_name',
                   'email',
                   'phone_number',
+                  'identification',
                   )
