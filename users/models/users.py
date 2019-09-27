@@ -55,7 +55,7 @@ class User(AbstractUser, TShoesModel):
     )
 
     # Boolean that verifies the user ID is verified
-    # in the platform
+    # in the platform quitar
     verified_id = models.BooleanField(
         'Verified Identification',
         default=False,
@@ -70,10 +70,10 @@ class User(AbstractUser, TShoesModel):
         null=True
     )
 
-    # User's bio
+    # User's bio quitar
     biography = models.CharField(max_length=255, blank=True)
 
-    # The resputation of the user, doesn't matters if it's customer, designer etc...
+    # The resputation of the user, doesn't matters if it's customer, designer etc... quitar
     reputation = models.FloatField(default=0)
 
     USERNAME_FIELD = 'email'

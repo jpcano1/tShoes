@@ -29,3 +29,5 @@ class Order(TShoesModel, models.Model):
     designer = models.ForeignKey('users.Designer',
                                  on_delete=models.CASCADE,
                                  null=True)
+
+    # optional address
