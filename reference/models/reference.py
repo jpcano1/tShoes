@@ -25,7 +25,7 @@ class Reference(TShoesModel, models.Model):
     # The image of the reference
     reference_image = models.ImageField(
         "Image of the reference to buy",
-        upload_to="inventory" + str(inventory.pk) + "/references/",
+        upload_to="inventory/references/",
         blank=True,
         null=True
     )

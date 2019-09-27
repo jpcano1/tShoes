@@ -1,7 +1,7 @@
 """ User views """
 
 # Django rest framework
-from rest_framework import mixins, status
+from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
@@ -11,7 +11,8 @@ from users.models import User
 # Serializers
 from users.serializers import UserModelSerializer, UserSignUpSerializer
 
-class UserViewset(mixins.CreateModelMixin,
+class UserViewset(viewsets.GenericViewSet,
+                  mixins.CreateModelMixin,
                   mixins.ListModelMixin,
                   mixins.RetrieveModelMixin):
     """ user viewset
@@ -19,7 +20,7 @@ class UserViewset(mixins.CreateModelMixin,
 
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    lookup_field = 'username'
+    lookup_field = 'pk'
 
     def retrieve(self, request, *args, **kwargs):
         """ add extra data to the response """

@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import environ
+
+env = environ.Env()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,14 +28,20 @@ SECRET_KEY = 'hcq&(jt)gu1p12__y*n_j012c4zi*ffq8$s_&n8oyfcdhu@k8m'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Email
+EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
+
 # Allowed hosts that can make requests
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "192.168.0.10",
-    "0.0.0.0",
-    "3.88.140.100"
-]
+# ALLOWED_HOSTS = [
+#     "localhost",
+#     "127.0.0.1",
+#     "192.168.0.10",
+#     "0.0.0.0",
+#     "3.88.140.100"
+# ]
+ALLOWED_HOSTS = ["*"]
 
 # Users and authentication
 AUTH_USER_MODEL = 'users.User'
@@ -100,12 +109,13 @@ WSGI_APPLICATION = 'tShoes.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'tshoes',
-        'USER': 'jpcano1@tshoes-db',
-        'PASSWORD': 'tSh03s2503',
-        'HOST': 'tshoes-db.postgres.database.azure.com',
-        'PORT': '5432'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'NAME': 'tshoes',
+        # 'USER': 'jpcano1@tshoes-db',
+        # 'PASSWORD': 'tSh03s2503',
+        # 'HOST': 'tshoes-db.postgres.database.azure.com',
+        # 'PORT': '5432'
     }
 }
 
@@ -162,3 +172,16 @@ STATICFILES_DIRS = (
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# DjangoRestFramework
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10,
+}

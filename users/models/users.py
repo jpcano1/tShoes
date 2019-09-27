@@ -43,8 +43,7 @@ class User(AbstractUser, TShoesModel):
         unique=True,
         error_messages={
             'unique': "A user with that id already exists"
-        },
-        primary_key=True
+        }
     )
 
     # Boolean that verifies the user is verified
@@ -75,7 +74,7 @@ class User(AbstractUser, TShoesModel):
     biography = models.CharField(max_length=255, blank=True)
 
     # The resputation of the user, doesn't matters if it's customer, designer etc...
-    reputation = models.FloatField(default=None)
+    reputation = models.FloatField(default=0)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'identification']
