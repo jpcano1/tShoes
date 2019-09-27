@@ -25,6 +25,12 @@ class UserSignUpSerializer(serializers.Serializer):
         verification token to the user through the email.
     """
 
+    username = serializers.CharField(
+        validators=[
+            UniqueValidator(queryset=User.objects.all())
+        ]
+    )
+
     # Email field
     email = serializers.EmailField(
         validators=[

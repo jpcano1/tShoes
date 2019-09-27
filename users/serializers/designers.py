@@ -20,18 +20,21 @@ class DesignerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
 
     def create(self, data):
         data.pop('password_confirmation')
+        print(data)
         designer = Designer.objects.create(**data)
         return designer
 
-class DesignerModelSerializer(UserSignUpSerializer):
+class DesignerModelSerializer(UserSignUpSerializer, serializers.ModelSerializer):
 
     class Meta:
         """ Meta class """
         model = Designer
-        fields = ('username',
+        fields = ('id',
+                  'username',
                   'first_name',
                   'last_name',
                   'email',
                   'phone_number',
                   'identification',
+                  'order_address',
                   )

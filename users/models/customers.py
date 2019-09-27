@@ -19,7 +19,7 @@ class Customer(User, models.Model):
     country = models.CharField(max_length=255, default=None)
 
     # Zip code of the house of the
-    zip_code = models.PositiveIntegerField(max_length=255, default=0)
+    zip_code = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         """ toString function """
