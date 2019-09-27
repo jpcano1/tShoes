@@ -10,6 +10,7 @@ from utils.models import TShoesModel
 class Inventory(TShoesModel, models.Model):
     """ Inventory Model """
 
+    # The owner of the inventory
     designer = models.OneToOneField(Designer, on_delete=models.CASCADE, related_name='Designer')
 
     def __str__(self):
