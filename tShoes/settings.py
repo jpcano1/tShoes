@@ -137,16 +137,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    "https://example.com",
-    "https://sub.example.com",
-    "http://localhost:4200",
-    "http://127.0.0.1:8080",
-    "http://192.168.0.10:8080",
-    "https://localhost:8080",
-    "http://3.88.140.100:8000"
-)
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = (
+#     "https://example.com",
+#     "https://sub.example.com",
+#     "http://localhost:4200",
+#     "http://127.0.0.1:8080",
+#     "http://192.168.0.10:8080",
+#     "https://localhost:8080",
+#     "http://3.88.140.100:8000"
+# )
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
