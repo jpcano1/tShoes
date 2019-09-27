@@ -7,6 +7,9 @@ from users.models.users import User
 class Designer(User, models.Model):
     """ Designer model """
 
+    # Order address of the designer
+    order_address = models.CharField(max_length=255, default=None)
+
     def __str__(self):
         """ String function """
         return "Designer: {} with id: {}".format(self.first_name + " " + self.last_name, str(self.pk))

@@ -1,9 +1,9 @@
 # Django models
 from django.db import models
 # Utils models
-from utils.models import TShoesModel
+from users.models import User
 
-class Shipper(TShoesModel, models.Model):
+class Shipper(User, models.Model):
     """ Class that represents the Shipper model """
 
     name = models.CharField(max_length=255, default=None)

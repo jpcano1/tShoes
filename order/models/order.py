@@ -31,3 +31,4 @@ class Order(TShoesModel, models.Model):
                                  null=True)
 
     # optional address
+    optional_adress = models.CharField(max_length=255, default=None)
