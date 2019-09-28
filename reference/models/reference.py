@@ -14,7 +14,7 @@ class Reference(TShoesModel, models.Model):
     reference_name = models.CharField(max_length=255, default=None)
 
     # Description of the reference
-    description = models.CharField(max_length=255, default=None, blank=True)
+    description = models.CharField(max_length=255, default=None, blank=True, null=True)
 
     # Price of the reference
     price = models.FloatField(blank=True, default=None)

@@ -11,7 +11,9 @@ from reference.models import Reference
 from inventory.models import Inventory
 
 class CreateReferenceSerializer(serializers.Serializer):
-    """ This serializers allows me to create a Reference with bussiness logic """
+    """ This serializers allows me to create a Reference with bussiness logic
+        taken from: https://www.django-rest-framework.org/api-guide/relations/
+    """
 
     # The name of the reference
     reference_name = serializers.CharField(
@@ -38,6 +40,12 @@ class CreateReferenceSerializer(serializers.Serializer):
         reference = Reference.objects.create(**data)
         return reference
 
+class ReferenceModelSerializer(serializers.ModelSerializer):
+    """ Reference Model Serializer """
+
+    inventory = serializers.StringRelatedField(read_only=True)
+
     class Meta:
-        """ Meta class """
+        """ Meta Class """
         model = Reference
+        fields = '__all__'

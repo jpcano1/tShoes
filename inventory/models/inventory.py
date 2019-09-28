@@ -15,4 +15,4 @@ class Inventory(TShoesModel, models.Model):
 
     def __str__(self):
         """ String function """
-        return "Inventory: {} from designer: {}".format(str(self.pk), str(self.designer))
+        return "Inventory: {} - {}".format(str(self.id), str(self.designer))

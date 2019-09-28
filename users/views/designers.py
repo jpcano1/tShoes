@@ -13,11 +13,18 @@ from users.serializers import (DesignerSignUpSerializer,
 from inventory.serializers import (InventoryModelSerializer,
                                    CreateInventorySerializer)
 
+# Reference Serializers
+from reference.serializers import (CreateReferenceSerializer,
+                                   ReferenceModelSerializer)
+
 # Designer Models
 from users.models import Designer
 
 # Inventory Models
 from inventory.models import Inventory
+
+# Reference models
+from reference.models import Reference
 
 # Documentar
 class DesignersViewSet(viewsets.GenericViewSet,
@@ -68,10 +75,9 @@ class DesignerInventoryViewSet(viewsets.GenericViewSet,
     def create(self, request, *args, **kwargs):
         designer = self.designer
         request.data['designer'] = designer.id
-        data = {}
         resp = status.HTTP_201_CREATED
         try:
-            inventory = Inventory.objects.get(designer=designer)
+            Inventory.objects.get(designer=designer)
             data = {
                 'message': 'You already have an inventory'
             }
@@ -82,3 +88,36 @@ class DesignerInventoryViewSet(viewsets.GenericViewSet,
             inventory = serializer.save()
             data = InventoryModelSerializer(inventory).data
         return Response(data, status=resp)
+
+class DesignerReferenceViewSet(viewsets.GenericViewSet,
+                               mixins.CreateModelMixin,
+                               mixins.RetrieveModelMixin,
+                               mixins.ListModelMixin,
+                               mixins.DestroyModelMixin):
+    """ Viewset of the relationship designer - reference """
+    queryset = Reference.objects.all()
+    serializer_class = ReferenceModelSerializer
+
+    def dispatch(self, request, *args, **kwargs):
+        designer_id = kwargs['designer']
+        inventory_id = kwargs['inventory']
+        self.designer = get_object_or_404(
+            Designer,
+            id=designer_id
+        )
+        self.inventory = get_object_or_404(
+            Inventory,
+            id=inventory_id,
+            designer=designer_id
+        )
+        return super(DesignerReferenceViewSet, self).dispatch(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        inventory = self.inventory
+        request.data['inventory'] = inventory.id
+        serializer = CreateReferenceSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        reference = serializer.save()
+        print("Se salvó")
+        data = ReferenceModelSerializer(reference).data
+        return Response(data, status=status.HTTP_201_CREATED)
