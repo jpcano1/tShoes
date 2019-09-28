@@ -17,7 +17,8 @@ class CreateReferenceSerializer(serializers.Serializer):
     reference_name = serializers.CharField(
         validators=[
             UniqueValidator(queryset=Reference.objects.all())
-        ]
+        ],
+        required=True
     )
 
     # The price of the reference

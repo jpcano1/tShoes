@@ -19,8 +19,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
+    # Django routes
     path('admin/', admin.site.urls),
 
+    # Project Routes
+    # Users
     path('', include(('users.urls', 'users'), namespace='users')),
-    path('', include(('inventory.urls', 'inventory'), namespace='inventory'))
+    # Inventory
+    path('', include(('inventory.urls', 'inventory'), namespace='inventory')),
+    # Reference
+    path('', include(('reference.urls', 'reference'), namespace='reference')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
