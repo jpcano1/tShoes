@@ -32,5 +32,7 @@ class CreateInventorySerializer(serializers.Serializer):
 
 class InventoryModelSerializer(serializers.ModelSerializer):
     """  """
-
+    class Meta:
+        """ Meta class """
+        
 
