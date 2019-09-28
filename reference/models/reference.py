@@ -1,4 +1,4 @@
-# Django
+# Django models
 from django.db import models
 
 # Inventory models

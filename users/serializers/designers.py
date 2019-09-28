@@ -13,7 +13,7 @@ from users.models import Designer
 
 
 class DesignerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
-    """ Serializer of the sign up designer model """
+    """ Serializer of the sign up designer model, allows me to create new designers """
 
     order_address = serializers.CharField(max_length=255)
 
@@ -28,7 +28,9 @@ class DesignerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
         return designer
 
 class DesignerModelSerializer(UserSignUpSerializer, serializers.ModelSerializer):
+    """ The model serializer of designers """
 
+    # Inventory of the designer
     inventory = InventoryModelSerializer(read_only=True)
 
     class Meta:
@@ -42,5 +44,4 @@ class DesignerModelSerializer(UserSignUpSerializer, serializers.ModelSerializer)
                   'phone_number',
                   'identification',
                   'order_address',
-                  'inventory',
-                  )
+                  'inventory',)

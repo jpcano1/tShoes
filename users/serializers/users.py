@@ -8,7 +8,6 @@ from django.conf import settings
 # Django Rest Framework models
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from rest_framework.authtoken.models import Token
 
 # Models
 from users.models import User
@@ -25,6 +24,7 @@ class UserSignUpSerializer(serializers.Serializer):
         verification token to the user through the email.
     """
 
+     # Username of the user
     username = serializers.CharField(
         validators=[
             UniqueValidator(queryset=User.objects.all())
@@ -58,17 +58,19 @@ class UserSignUpSerializer(serializers.Serializer):
     password = serializers.CharField(min_length=8, max_length=64)
     password_confirmation = serializers.CharField(min_length=8, max_length=64)
 
-    # Name
+    # First_name and last_name of the username
     first_name = serializers.CharField(min_length=2, max_length=30)
     last_name = serializers.CharField(min_length=2, max_length=30)
 
-    # Image
+    # Image of the user
     profile_picture = serializers.ImageField(required=False, default=None)
 
     def validate(self, data):
+        """ makes some validations before creation of the user """
         passwd = data['password']
         passwd_confirmation = data['password_confirmation']
 
+        # password and password confirmation validation
         if passwd_confirmation != passwd:
             raise serializers.ValidationError("Passwords don't match")
 
@@ -76,6 +78,7 @@ class UserSignUpSerializer(serializers.Serializer):
         return data
 
     def create(self, data):
+        """ Creates the user after the verification """
         data.pop('password_confirmation')
         user = User.objects.create_user(**data)
         return user
@@ -104,5 +107,4 @@ class UserModelSerializer(serializers.ModelSerializer):
                   'last_name',
                   'email',
                   'phone_number',
-                  'identification',
-                  )
+                  'identification',)

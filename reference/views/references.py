@@ -12,6 +12,7 @@ from reference.serializers import ReferenceModelSerializer
 class ReferenceViewSet(viewsets.GenericViewSet,
                        mixins.ListModelMixin,
                        mixins.RetrieveModelMixin):
+    """ The viewset of references """
 
     queryset = Reference.objects.all()
     serializer_class = ReferenceModelSerializer
