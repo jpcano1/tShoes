@@ -68,8 +68,17 @@ class DesignerInventoryViewSet(viewsets.GenericViewSet,
     def create(self, request, *args, **kwargs):
         designer = self.designer
         request.data['designer'] = designer.id
-        serializer = CreateInventorySerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        inventory = serializer.save()
-        data = InventoryModelSerializer(inventory).data
-        return Response(data, status=status.HTTP_201_CREATED)
+        data = {}
+        resp = status.HTTP_201_CREATED
+        try:
+            inventory = Inventory.objects.get(designer=designer)
+            data = {
+                'message': 'You already have an inventory'
+            }
+            resp = status.HTTP_403_FORBIDDEN
+        except Inventory.DoesNotExist:
+            serializer = CreateInventorySerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            inventory = serializer.save()
+            data = InventoryModelSerializer(inventory).data
+        return Response(data, status=resp)
