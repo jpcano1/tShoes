@@ -20,7 +20,7 @@ class Reference(TShoesModel, models.Model):
     price = models.FloatField(blank=True, default=None)
 
     # The inventory that owns this reference
-    inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE, related_name='Inventory')
+    inventory = models.ForeignKey(Inventory, on_delete=models.CASCADE, related_name='references')
 
     # The image of the reference
     reference_image = models.ImageField(
