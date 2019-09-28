@@ -110,8 +110,7 @@ class DesignerReferenceViewSet(viewsets.GenericViewSet,
         inventory_id = kwargs['inventory']
         self.designer = get_object_or_404(
             Designer,
-            id=designer_id
-        )
+            id=designer_id)
         self.inventory = get_object_or_404(
             Inventory,
             id=inventory_id,
