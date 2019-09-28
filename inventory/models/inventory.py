@@ -11,7 +11,7 @@ class Inventory(TShoesModel, models.Model):
     """ Inventory Model """
 
     # The owner of the inventory
-    designer = models.OneToOneField(Designer, on_delete=models.CASCADE, related_name='Designer')
+    designer = models.OneToOneField(Designer, on_delete=models.CASCADE, related_name='inventory')
 
     def __str__(self):
         """ String function """

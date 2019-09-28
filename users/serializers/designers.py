@@ -5,6 +5,9 @@ from rest_framework import serializers
 # Serializer
 from .users import UserModelSerializer, UserSignUpSerializer
 
+# Invetory Serializers
+from inventory.serializers import InventoryModelSerializer
+
 # Models
 from users.models import Designer
 
@@ -26,6 +29,8 @@ class DesignerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
 
 class DesignerModelSerializer(UserSignUpSerializer, serializers.ModelSerializer):
 
+    inventory = InventoryModelSerializer(read_only=True)
+
     class Meta:
         """ Meta class """
         model = Designer
@@ -37,4 +42,5 @@ class DesignerModelSerializer(UserSignUpSerializer, serializers.ModelSerializer)
                   'phone_number',
                   'identification',
                   'order_address',
+                  'inventory',
                   )
