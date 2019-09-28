@@ -1,8 +1,7 @@
 """ Inventory views """
 
 # Django rest framework
-from  rest_framework import mixins, viewsets, status
-from rest_framework.response import Response
+from  rest_framework import mixins, viewsets
 
 # Models
 from inventory.models import Inventory
@@ -13,8 +12,11 @@ from inventory.serializers import InventoryModelSerializer
 class InventoryViewSet(viewsets.GenericViewSet,
                        mixins.ListModelMixin,
                        mixins.RetrieveModelMixin):
-    """ Inventory viewsets """
+    """ Inventory viewsets, it lists and retrieves """
 
+    # Queryset where the queries are made
     queryset = Inventory.objects.all()
+    # The serializer class of the inventory model
     serializer_class = InventoryModelSerializer
+    # The field that's is going to be looked for
     lookup_field = 'id'

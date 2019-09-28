@@ -36,6 +36,9 @@ class Reference(TShoesModel, models.Model):
     # The max stock for sale
     max_stock = models.PositiveIntegerField(default=None)
 
+    # The number of occurences of this reference
+    stock = models.PositiveIntegerField(default=0)
+
     def __str__(self):
         """ String function """
         return "Reference: {} from inventory: {}".format(self.reference_name, str(self.inventory))
