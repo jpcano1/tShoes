@@ -4,6 +4,7 @@
 from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
+from rest_framework.decorators import action
 
 # User Serializers
 from users.serializers import (DesignerSignUpSerializer,
@@ -99,8 +100,10 @@ class DesignerReferenceViewSet(viewsets.GenericViewSet,
                                mixins.CreateModelMixin,
                                mixins.RetrieveModelMixin,
                                mixins.ListModelMixin,
-                               mixins.DestroyModelMixin):
+                               mixins.DestroyModelMixin,
+                               mixins.UpdateModelMixin):
     """ Viewset of the relationship designer - inventory - reference """
+
     queryset = Reference.objects.all()
     serializer_class = ReferenceModelSerializer
 

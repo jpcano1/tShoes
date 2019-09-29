@@ -48,4 +48,7 @@ class ReferenceModelSerializer(serializers.ModelSerializer):
     class Meta:
         """ Meta Class """
         model = Reference
-        fields = '__all__'
+        exclude = ('created',
+                   'modified',
+                   'min_stock',
+                   'max_stock')

@@ -9,9 +9,6 @@ from inventory.models import Inventory
 # Designer models
 from users.models import Designer
 
-# Reference Serializers
-from reference.serializers import ReferenceModelSerializer
-
 class CreateInventorySerializer(serializers.Serializer):
     """ Serializer that allows me to create an inventory """
 
@@ -43,7 +40,7 @@ class InventoryModelSerializer(serializers.ModelSerializer):
     designer = serializers.StringRelatedField(read_only=True)
 
     # The references of the inventory
-    references = ReferenceModelSerializer(many=True, read_only=True)
+    references = serializers.StringRelatedField(many=True, read_only=True)
 
     class Meta:
         """ Meta class """

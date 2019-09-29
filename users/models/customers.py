@@ -24,4 +24,4 @@ class Customer(User, models.Model):
     def __str__(self):
         """ toString function """
         return "Customer with name: {} and address: {}".format(self.first_name + " " + self.last_name,
-                                                               self.billing_adress)
+                                                               str(self.billing_adress))
