@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 # Serializer
-from .users import UserModelSerializer, UserSignUpSerializer
+from .users import UserSignUpSerializer
 
 # Invetory Serializers
 from inventory.serializers import InventoryModelSerializer
@@ -15,6 +15,7 @@ from users.models import Designer
 class DesignerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
     """ Serializer of the sign up designer model, allows me to create new designers """
 
+    # Order address of the designer, where the reference is picked up
     order_address = serializers.CharField(max_length=255)
 
     def validate(self, data):
