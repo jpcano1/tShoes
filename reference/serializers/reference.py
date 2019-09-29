@@ -10,8 +10,6 @@ from reference.models import Reference
 # Inventory models
 from inventory.models import Inventory
 
-from inventory.serializers import InventoryModelSerializer
-
 class CreateReferenceSerializer(serializers.Serializer):
     """ This serializers allows me to create a Reference with bussiness logic
         taken from: https://www.django-rest-framework.org/api-guide/relations/
@@ -37,6 +35,9 @@ class CreateReferenceSerializer(serializers.Serializer):
     # Maximum quantity for this reference in the inventory
     max_stock = serializers.IntegerField(required=True)
 
+    # The total stock of shoes in the inventory
+    stock = serializers.IntegerField(required=True)
+
     def create(self, data):
         """ Creates the reference and adds it into an inventory """
         reference = Reference.objects.create(**data)
@@ -55,6 +56,7 @@ class InventoryField(serializers.RelatedField):
 class ReferenceModelSerializer(serializers.ModelSerializer):
     """ Reference Model Serializer """
 
+    # Inventory of the references
     inventory = InventoryField(read_only=True)
 
     class Meta:
