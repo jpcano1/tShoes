@@ -28,6 +28,13 @@ class CreateInventorySerializer(serializers.Serializer):
     #
     #     return data
 
+    def validate_designer(self, data):
+        designer = data
+        q = Inventory.objects.filter(designer=designer)
+        if q.exists():
+            raise serializers.ValidationError("You already have an inventory")
+        return data
+
     def create(self, data):
         """ Creates an inventory for the shoes that are gonna be sold """
         inventory = Inventory.objects.create(**data)

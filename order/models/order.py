@@ -32,6 +32,5 @@ class Order(TShoesModel, models.Model):
     #                              on_delete=models.CASCADE,
     #                              null=True,
     #                              related_name='designer_order')
-
     # optional address
     optional_adress = models.CharField(max_length=255, default=None)
