@@ -10,6 +10,8 @@ from reference.models import Reference
 # Inventory models
 from inventory.models import Inventory
 
+from inventory.serializers import InventoryModelSerializer
+
 class CreateReferenceSerializer(serializers.Serializer):
     """ This serializers allows me to create a Reference with bussiness logic
         taken from: https://www.django-rest-framework.org/api-guide/relations/
@@ -40,10 +42,20 @@ class CreateReferenceSerializer(serializers.Serializer):
         reference = Reference.objects.create(**data)
         return reference
 
+class InventoryField(serializers.RelatedField):
+    """ Allows me to create a personalized field in the model serializer """
+
+    def to_representation(self, value):
+        data = {
+            'id': value.id,
+            'designer': value.designer.get_full_name()
+        }
+        return data
+
 class ReferenceModelSerializer(serializers.ModelSerializer):
     """ Reference Model Serializer """
 
-    inventory = serializers.StringRelatedField(read_only=True)
+    inventory = InventoryField(read_only=True)
 
     class Meta:
         """ Meta Class """

@@ -24,11 +24,10 @@ class DesignerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
 
     def create(self, data):
         data.pop('password_confirmation')
-        print(data)
         designer = Designer.objects.create(**data)
         return designer
 
-class DesignerModelSerializer(UserSignUpSerializer, serializers.ModelSerializer):
+class DesignerModelSerializer(serializers.ModelSerializer):
     """ The model serializer of designers """
 
     # Inventory of the designer

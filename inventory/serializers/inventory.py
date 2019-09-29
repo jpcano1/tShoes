@@ -33,11 +33,16 @@ class CreateInventorySerializer(serializers.Serializer):
         inventory = Inventory.objects.create(**data)
         return inventory
 
+class DesignerField(serializers.RelatedField):
+
+    def to_representation(self, value):
+        return value.get_full_name()
+
 class InventoryModelSerializer(serializers.ModelSerializer):
     """ This serializer represents the model of the inventory """
 
     # The desginer of the inventory
-    designer = serializers.StringRelatedField(read_only=True)
+    designer = DesignerField(read_only=True)
 
     # The references of the inventory
     references = serializers.StringRelatedField(many=True, read_only=True)

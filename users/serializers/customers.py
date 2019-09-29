@@ -11,3 +11,11 @@ class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
         allows me to create new customers
     """
 
+    billing_adress = serializers.CharField(max_length=255)
+
+    city = serializers.CharField(max_length=255)
+
+    country = serializers.CharField(max_length=255)
+
+    zip_code = serializers.CharField(max_length=255)
+

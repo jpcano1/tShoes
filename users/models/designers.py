@@ -12,4 +12,4 @@ class Designer(User, models.Model):
 
     def __str__(self):
         """ String function """
-        return "By designer: {}".format(self.first_name + " " + self.last_name)
+        return "By designer: {}".format(self.get_full_name())
