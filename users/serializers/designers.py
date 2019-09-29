@@ -3,14 +3,13 @@
 from rest_framework import serializers
 
 # Serializer
-from .users import UserSignUpSerializer
+from .users import UserSignUpSerializer, UserModelSerializer
 
 # Invetory Serializers
 from inventory.serializers import InventoryModelSerializer
 
 # Models
 from users.models import Designer
-
 
 class DesignerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
     """ Serializer of the sign up designer model, allows me to create new designers """
@@ -36,12 +35,5 @@ class DesignerModelSerializer(serializers.ModelSerializer):
     class Meta:
         """ Meta class """
         model = Designer
-        fields = ('id',
-                  'username',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  'phone_number',
-                  'identification',
-                  'order_address',
-                  'inventory',)
+        fields = UserModelSerializer.Meta.fields.copy()
+        fields.append('inventory')

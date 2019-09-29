@@ -27,8 +27,7 @@ class Reference(TShoesModel, models.Model):
         "Image of the reference to buy",
         upload_to="inventory/references/",
         blank=True,
-        null=True
-    )
+        null=True,)
 
     # The min stock for sale
     min_stock = models.PositiveIntegerField(default=0)

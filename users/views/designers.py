@@ -124,8 +124,9 @@ class DesignerReferenceViewSet(viewsets.GenericViewSet,
     def create(self, request, *args, **kwargs):
         """ Creates the reference from the inventory that was found """
         inventory = self.inventory
-        request.data['inventory'] = inventory.id
-        serializer = CreateReferenceSerializer(data=request.data)
+        data = request.data.copy()
+        data['inventory'] = inventory.id
+        serializer = CreateReferenceSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         reference = serializer.save()
         data = ReferenceModelSerializer(reference).data
