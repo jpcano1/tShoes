@@ -10,15 +10,15 @@ class Customer(User, models.Model):
     """
 
     # Billing address of the user customer
-    billing_adress = models.CharField(max_length=255, default=None)
+    billing_address = models.CharField(max_length=255, default=None, null=True)
 
     # City where the customer lives
-    city = models.CharField(max_length=255, default=None)
+    city = models.CharField(max_length=255, default=None, null=True)
 
     # Country where the customer lives
-    country = models.CharField(max_length=255, default=None)
+    country = models.CharField(max_length=255, default=None, null=True)
 
-    # Zip code of the house of the
+    # Zip code of the house of the customer
     zip_code = models.PositiveIntegerField(default=0)
 
     def __str__(self):

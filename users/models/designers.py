@@ -13,3 +13,7 @@ class Designer(User, models.Model):
     def __str__(self):
         """ String function """
         return "By designer: {}".format(self.get_full_name())
+
+    #doris1
+    #doris@gmail.com
+    #123

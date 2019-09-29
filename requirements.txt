@@ -29,3 +29,6 @@ psycopg2>=2.8.3
 
 # Anymail
 django-anymail[mailgun]>=6.1.0
+
+# Whatsapp API Twilio
+twilio>=6.31

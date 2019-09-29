@@ -18,7 +18,7 @@ class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
     """
 
     # Basic data about localization: billind_address, city, country and zip code.
-    billing_adress = serializers.CharField(max_length=255)
+    billing_address = serializers.CharField(max_length=255)
     city = serializers.CharField(max_length=255)
     country = serializers.CharField(max_length=255)
     zip_code = serializers.CharField(max_length=255)
@@ -39,7 +39,7 @@ class CustomerModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = UserModelSerializer.Meta.fields.copy()
-        fields.append('billing_adress',
-                      'city',
-                      'country',
-                      'zip_code')
+        fields.append('billing_address')
+        fields.append('city')
+        fields.append('country')
+        fields.append('zip_code')
