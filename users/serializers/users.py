@@ -19,6 +19,9 @@ from jose import jwt
 from jose.jwt import *
 from django.utils import timezone
 
+# Twilio messages
+from twilio.rest import Client
+
 class UserSignUpSerializer(serializers.Serializer):
     """ Class that allows us to create users and to send
         verification token to the user through the email.
@@ -81,10 +84,24 @@ class UserSignUpSerializer(serializers.Serializer):
         """ Creates the user after the verification """
         data.pop('password_confirmation')
         user = User.objects.create_user(**data)
+        # self.send_confirmation_message(user)
         return user
 
+    def send_confirmation_message(self, user):
+        """  """
+        client = Client()
+        verification_token = self.gen_verification_token(user)
+        message = "Welcome! Please verify your number with this code: {}".format(verification_token)
+        from_whatsapp_number = 'whatsapp:+14155238886'
+        to_whatsapp_number = 'whatsapp:{}'.format(user.phone_number)
+
+        client.messages.create(body=message,
+                               from_=from_whatsapp_number,
+                               to=to_whatsapp_number)
+        print("Sending message")
+
     @staticmethod
-    def gen_verificaion_token(user):
+    def gen_verification_token(user):
         """ Create JWT token that the user can use to verify its account """
         exp_date = timezone.now() + timedelta(days=3)
         payload = {

@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from ..models import Customer
 
 # Customer Serializers
-from ..serializers import CustomerModelSerializer
+from ..serializers import CustomerModelSerializer, CustomerSignUpSerializer
 
 class CustomerViewSet(viewsets.GenericViewSet,
                       mixins.CreateModelMixin,
@@ -22,7 +22,7 @@ class CustomerViewSet(viewsets.GenericViewSet,
 
     def create(self, request, *args, **kwargs):
         """ Documentar """
-        serializer = CustomerModelSerializer(data=request.data)
+        serializer = CustomerSignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         customer = serializer.save()
         data = CustomerModelSerializer(customer).data

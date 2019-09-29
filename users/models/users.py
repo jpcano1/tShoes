@@ -25,7 +25,7 @@ class User(AbstractUser, TShoesModel):
     # Phone number regular expression to
     # check the number validation
     phone_regex = RegexValidator(
-        regex=r'\+?1?\d{9, 20}$',
+        regex=r'^(\(?\+?[0-9]*\)?)?[0-9_\- \(\)]*$',
         message='Phone number must be entered in the format: +9999999999. Up to 20 digits allowed.'
     )
 
