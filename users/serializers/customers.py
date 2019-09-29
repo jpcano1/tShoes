@@ -35,7 +35,7 @@ class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
 
 class CustomerModelSerializer(serializers.ModelSerializer):
     """  """
-    
+
     class Meta:
         model = Customer
         fields = UserModelSerializer.Meta.fields.copy()
