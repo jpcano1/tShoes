@@ -11,10 +11,7 @@ from ..serializers import OrderModelSerializer
 
 class OrderViewSet(viewsets.GenericViewSet,
                    mixins.ListModelMixin,
-                   mixins.CreateModelMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.DestroyModelMixin,
-                   mixins.UpdateModelMixin):
+                   mixins.RetrieveModelMixin,):
     """ Order view set """
 
     serializer_class = OrderModelSerializer

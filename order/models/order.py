@@ -18,8 +18,9 @@ class Order(TShoesModel, models.Model):
 
     # Customer
     customer = models.ForeignKey('users.Customer',
-                                 on_delete=models.CASCADE,
+                                 on_delete=models.SET_NULL,
                                  null=True,
+                                 default=None,
                                  related_name='order')
 
     # Shipper
@@ -37,4 +38,5 @@ class Order(TShoesModel, models.Model):
     # optional address
     optional_adress = models.CharField(max_length=255, default=None)
 
+    # The actual status of the order
     status = models.ManyToManyField(Status, default=Status.NONE)
