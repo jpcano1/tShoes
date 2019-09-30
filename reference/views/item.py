@@ -14,7 +14,7 @@ from order.models import Order
 from ..models import Reference
 
 # Item serializer
-from ..serializers import ItemModelSerializer
+from ..serializers import ItemModelSerializer, AddItemSerializer
 
 class ItemViewSet(viewsets.GenericViewSet,
                   mixins.ListModelMixin,
@@ -34,6 +34,9 @@ class ItemViewSet(viewsets.GenericViewSet,
         return super(ItemViewSet, self).dispatch(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        print(request.user)
-        print(request.data)
+        data = request.data.copy()
+        data['reference'] = self.reference.id
+        serializer = AddItemSerializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response("Hola", status=status.HTTP_201_CREATED)

@@ -4,10 +4,11 @@
 from rest_framework import serializers
 
 # Item models
-from ..models import Item
+from ..models import Item, Reference
 
 # Order models
 from order.models import Order, Status
+
 
 class ReferenceField(serializers.RelatedField):
     """ Reference personalized field """
@@ -42,36 +43,36 @@ class ItemModelSerializer(serializers.ModelSerializer):
 
 class AddItemSerializer(serializers.Serializer):
 
-    def validate(self, data):
-        user = data['user']
+    quantity = serializers.IntegerField()
 
+    reference = serializers.PrimaryKeyRelatedField(queryset=Reference.objects.all())
+
+    def validate(self, data):
         try:
+            user = data['user']
             order = Order.objects.get(customer=user, status=Status.NONE)
             self.context['order'] = order
-        except Order.DoesNotExist:
+        except (Order.DoesNotExist, KeyError):
             pass
         return data
 
     def create(self, data):
-        print(data)
-        # order = self.context['order']
-        # reference = data['reference']
-        # quantity = data['quantity']
-        # if order.exists():
-        #     item = Item.objects.create(
-        #         order=order,
-        #         reference=reference,
-        #         quantity=quantity
-        #     )
-        #     return item
-        # user = data['user']
-        # order = Order.objects.create()
-        # item = Item.objects.create(
-        #         order=order,
-        #         reference=reference,
-        #         quantity=quantity
-        #     )
-        # return item
-        return "Hola"
+        order = self.context.get('order')
+        reference = data['reference']
+        quantity = data['quantity']
+        if order:
+            item = Item.objects.create(
+                order=order,
+                reference=reference,
+                quantity=quantity
+            )
+            return item
+        order = Order.objects.create()
+        item = Item.objects.create(
+                order=order,
+                reference=reference,
+                quantity=quantity
+            )
+        return item
 
 

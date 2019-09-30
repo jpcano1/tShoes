@@ -31,7 +31,7 @@ class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
         """  """
         data.pop('password_confirmation')
         customer = Customer.objects.create(**data)
-        # self.send_confirmation_message(customer)
+        self.send_confirmation_email(customer)
         return customer
 
 class CustomerModelSerializer(serializers.ModelSerializer):

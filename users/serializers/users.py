@@ -62,23 +62,26 @@ class UserLoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(min_length=8, max_length=64)
 
-    def validate(self, data):
-        """ Check credentials. """
-        user = authenticate(username=data['email'], password=data['password'])
-
-        if not user:
-            raise serializers.ValidationError('Invalid Credentials')
-
-        if not user.is_verified:
-            raise serializers.ValidationError("Account is not active yet")
-
-        self.context['user'] = user
-        return data
+    # def validate(self, data):
+    #     """ Check credentials. """
+    #     # user = authenticate(username=data['email'], password=data['password'])
+    #     user = User.objects.get(email=data['email'], password=data['password'])
+    #
+    #     if not user:
+    #         raise serializers.ValidationError('Invalid Credentials')
+    #
+    #     if not user.is_verified:
+    #         raise serializers.ValidationError("Account is not active yet")
+    #
+    #     self.context['user'] = user
+    #     return data
 
     def create(self, data):
         """ Generate or retrieve new Token """
-        token, created = Token.objects.get_or_create(user=self.context['user'])
-        return self.context['user'], token.key
+        user = User.objects.get(email=data['email'])
+        # token, created = Token.objects.get_or_create(user=self.context['user'])
+        token = Token.objects.get_or_create(user=user)
+        return user, token.key
 
 class UserSignUpSerializer(serializers.Serializer):
     """ Class that allows us to create users and to send
@@ -142,7 +145,7 @@ class UserSignUpSerializer(serializers.Serializer):
         """ Creates the user after the verification """
         data.pop('password_confirmation')
         user = User.objects.create_user(**data)
-        # self.send_confirmation_message(user)
+        self.send_confirmation_email(user)
         return user
 
     def send_confirmation_message(self, user):
@@ -198,4 +201,5 @@ class UserModelSerializer(serializers.ModelSerializer):
                   'last_name',
                   'email',
                   'phone_number',
-                  'identification',]
+                  'identification',
+                  'password']

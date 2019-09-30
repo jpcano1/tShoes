@@ -24,6 +24,7 @@ class DesignerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
     def create(self, data):
         data.pop('password_confirmation')
         designer = Designer.objects.create(**data)
+        self.send_confirmation_message(designer)
         return designer
 
 class DesignerModelSerializer(serializers.ModelSerializer):

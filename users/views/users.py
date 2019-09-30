@@ -11,7 +11,8 @@ from users.models import User
 # Serializers
 from users.serializers import (UserModelSerializer,
                                UserSignUpSerializer,
-                               UserLoginSerializer)
+                               UserLoginSerializer,
+                               AccountVerificationSerializer)
 
 class UserViewset(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
@@ -53,3 +54,12 @@ class UserViewset(viewsets.GenericViewSet,
             'access_token': token
         }
         return Response(data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'])
+    def verify(self, request):
+        """ Account verification """
+        serializer = AccountVerificationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = {"message": "Congratulations, now go buy some shoes!!"}
+        return Response(data, status=status.HTTP_200_OK)
