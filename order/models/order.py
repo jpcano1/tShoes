@@ -4,6 +4,8 @@ from django.db import models
 # Utils models
 from utils.models import TShoesModel
 
+from .status import Status
+
 class Order(TShoesModel, models.Model):
     """
         Class that represents the order model
@@ -34,3 +36,5 @@ class Order(TShoesModel, models.Model):
     #                              related_name='designer_order')
     # optional address
     optional_adress = models.CharField(max_length=255, default=None)
+
+    status = models.ManyToManyField(Status, default=Status.NONE)
