@@ -9,7 +9,9 @@ from rest_framework.decorators import action
 from users.models import User
 
 # Serializers
-from users.serializers import UserModelSerializer, UserSignUpSerializer
+from users.serializers import (UserModelSerializer,
+                               UserSignUpSerializer,
+                               UserLoginSerializer)
 
 class UserViewset(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
@@ -38,4 +40,16 @@ class UserViewset(viewsets.GenericViewSet,
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         data = UserModelSerializer(user).data
+        return Response(data, status=status.HTTP_201_CREATED)
+
+    @action(detail=False, methods=['post'])
+    def login(self, request):
+        """ User sign up """
+        serializer = UserLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user, token = serializer.save()
+        data = {
+            'user': UserModelSerializer(user).data,
+            'access_token': token
+        }
         return Response(data, status=status.HTTP_201_CREATED)

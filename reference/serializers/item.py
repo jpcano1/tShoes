@@ -53,19 +53,25 @@ class AddItemSerializer(serializers.Serializer):
         return data
 
     def create(self, data):
-        order = self.context['order']
-        reference = data['reference']
-        quantity = data['quantity']
-        if order.exists():
-            item = Item.objects.create(
-                order=order,
-                reference=reference,
-                quantity=quantity
-            )
-            return item
-        user = data['user']
-        order = Order.objects.create(
-            customer=user
-        )
+        print(data)
+        # order = self.context['order']
+        # reference = data['reference']
+        # quantity = data['quantity']
+        # if order.exists():
+        #     item = Item.objects.create(
+        #         order=order,
+        #         reference=reference,
+        #         quantity=quantity
+        #     )
+        #     return item
+        # user = data['user']
+        # order = Order.objects.create()
+        # item = Item.objects.create(
+        #         order=order,
+        #         reference=reference,
+        #         quantity=quantity
+        #     )
+        # return item
+        return "Hola"
 
 

@@ -4,10 +4,13 @@
 from django.core.validators import RegexValidator
 from django.contrib.auth import authenticate, password_validation
 from django.conf import settings
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 
 # Django Rest Framework models
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from rest_framework.authtoken.models import Token
 
 # Models
 from users.models import User
@@ -16,11 +19,66 @@ from users.models import User
 
 # Utilities
 from jose import jwt
-from jose.jwt import *
+from jose import *
 from django.utils import timezone
+from datetime import timedelta
 
 # Twilio messages
 from twilio.rest import Client
+
+class AccountVerificationSerializer(serializers.Serializer):
+    """ Account Verification Serializer """
+
+    token = serializers.CharField()
+
+    def validate_token(self, data):
+        """ Verify token is valid """
+        try:
+            payload = jwt.decode(data, settings.SECRET_KEY, algorithms=['HS256'])
+
+        except ExpiredSignatureError:
+            raise serializers.ValidationError("Verification link has expired.")
+        except JWTError:
+            raise serializers.ValidationError("Invalid token")
+
+        if payload['type'] != 'email_confirmation':
+            raise serializers.ValidationError("Invalid Token")
+
+        self.context['payload'] = payload
+        return data
+
+    def save(self):
+        """ Update user's serify status """
+        payload = self.context['payload']
+        user = User.objects.get(username=payload['user'])
+        user.is_verified = True
+        user.save()
+
+class UserLoginSerializer(serializers.Serializer):
+    """ User login Serializer
+    Handle the login request data.
+    """
+
+    email = serializers.EmailField()
+    password = serializers.CharField(min_length=8, max_length=64)
+
+    def validate(self, data):
+        """ Check credentials. """
+        user = authenticate(username=data['email'], password=data['password'])
+
+        if not user:
+            raise serializers.ValidationError('Invalid Credentials')
+
+        if not user.is_verified:
+            raise serializers.ValidationError("Account is not active yet")
+
+        self.context['user'] = user
+        return data
+
+    def create(self, data):
+        """ Generate or retrieve new Token """
+        token, created = Token.objects.get_or_create(user=self.context['user'])
+        return self.context['user'], token.key
 
 class UserSignUpSerializer(serializers.Serializer):
     """ Class that allows us to create users and to send
@@ -99,6 +157,22 @@ class UserSignUpSerializer(serializers.Serializer):
                                from_=from_whatsapp_number,
                                to=to_whatsapp_number)
         print("Sending message")
+
+    def send_confirmation_email(self, user):
+        """ Send account verification link to given user """
+        verification_token = self.gen_verification_token(user)
+        subject = 'Welcome @{}! Verify your account to start using Comparte Ride'.format(user.username)
+        from_email = 'Comparte Ride <noreply@comparteride.com>'
+        content = render_to_string(
+            'emails/users/account_verification.html',
+            {
+                'token': verification_token,
+                'user': user
+            })
+        msg = EmailMultiAlternatives(subject, content, from_email, [user.email])
+        msg.attach(content, 'text/html')
+        msg.send()
+        print("Sending email")
 
     @staticmethod
     def gen_verification_token(user):
