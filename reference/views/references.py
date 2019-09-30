@@ -40,6 +40,7 @@ class ReferenceViewSet(viewsets.GenericViewSet,
 
     @action(detail=True, methods=['get'])
     def quantity(self, request, *args, **kwargs):
+        """ Retrieves the availability of the reference """
         shoe = Reference.objects.get(id=kwargs['id'])
         quantity = request.data['quantity']
         if shoe.stock < int(quantity):

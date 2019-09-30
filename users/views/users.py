@@ -45,7 +45,7 @@ class UserViewset(viewsets.GenericViewSet,
 
     @action(detail=False, methods=['post'])
     def login(self, request):
-        """ User sign up """
+        """ User log in """
         serializer = UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user, token = serializer.save()
