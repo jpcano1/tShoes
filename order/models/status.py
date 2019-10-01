@@ -21,6 +21,8 @@ class Status(models.Model):
 
     id = models.PositiveSmallIntegerField(choices=STATUS_TYPE_CHOICES, primary_key=True)
 
+    value = models.CharField(choices=STATUS_TYPE_CHOICES, max_length=255, default=STATUS_TYPE_CHOICES[0][1])
+
     def __str__(self):
         """ toString function """
         return self.get_id_display()

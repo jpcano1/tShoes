@@ -30,13 +30,8 @@ class Order(TShoesModel, models.Model):
                                 on_delete=models.SET_NULL,
                                 related_name='shipper_order')
 
-    # # Designer
-    # designer = models.ForeignKey('users.Designer',
-    #                              on_delete=models.CASCADE,
-    #                              null=True,
-    #                              related_name='designer_order')
     # optional address
-    optional_adress = models.CharField(max_length=255, default=None, null=True)
+    optional_address = models.CharField(max_length=255, default=None, null=True)
 
     # The actual status of the order
-    status = models.ManyToManyField(Status, default=Status.NONE)
+    # status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True)

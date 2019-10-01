@@ -29,4 +29,7 @@ urlpatterns = [
     path('', include(('inventory.urls', 'inventory'), namespace='inventory')),
     # Reference
     path('', include(('reference.urls', 'reference'), namespace='reference')),
+    # Order
+    path('', include(('order.urls', 'order'), namespace='order')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

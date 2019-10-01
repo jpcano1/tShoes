@@ -22,4 +22,4 @@ class Item(TShoesModel, models.Model):
     reference = models.ForeignKey(Reference, on_delete=models.CASCADE)
 
     # Attibute that models the order of shoes
-    order = models.ForeignKey('order.Order', on_delete=models.CASCADE)
+    order = models.ForeignKey('order.Order', on_delete=models.CASCADE, related_name='items')

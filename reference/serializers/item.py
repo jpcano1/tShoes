@@ -22,7 +22,10 @@ class ReferenceField(serializers.RelatedField):
         """  """
         data = {
             'id': value.id,
-            # 'inventory': value.inventory,
+            'inventory': {
+                'id': value.inventory.id,
+                'designer': value.inventory.designer.get_full_name()
+            },
             'price': value.price,
             'reference_name': value.reference_name
         }
@@ -36,7 +39,7 @@ class OrderField(serializers.RelatedField):
 class ItemModelSerializer(serializers.ModelSerializer):
     """ Item model serializer """
 
-    reference = ReferenceModelSerializer(read_only=True)
+    reference = ReferenceField(read_only=True)
 
     order = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -73,6 +76,8 @@ class AddItemSerializer(serializers.Serializer):
             self.context['item'] = item
             if data['quantity'] + item.quantity > self.context['stock']:
                 raise serializers.ValidationError("There are not enough references to sell")
+            elif data['quantity'] + item.quantity < 0:
+                raise serializers.ValidationError("You can't have less than 0 references")
         except Item.DoesNotExist:
             pass
         return data
