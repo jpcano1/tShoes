@@ -13,15 +13,20 @@ from order.models import Order
 # Reference models
 from ..models import Reference
 
+# Item models
+from ..models import Item
+
 # Item serializer
 from ..serializers import ItemModelSerializer, AddItemSerializer
 
 class ItemViewSet(viewsets.GenericViewSet,
                   mixins.ListModelMixin,
                   mixins.RetrieveModelMixin,
-                  mixins.CreateModelMixin,):
+                  mixins.CreateModelMixin,
+                  mixins.DestroyModelMixin):
     """ Item Viewset """
 
+    queryset = Item.objects.all()
     serializer_class = ItemModelSerializer
     lookup_field = 'id'
 
@@ -36,8 +41,20 @@ class ItemViewSet(viewsets.GenericViewSet,
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
         data['reference'] = self.reference.id
-        serializer = AddItemSerializer(data=data)
+        serializer = AddItemSerializer(
+            data=data,
+            context={'request': request, 'stock': self.reference.stock}
+        )
         serializer.is_valid(raise_exception=True)
         item = serializer.save()
         data = ItemModelSerializer(item).data
         return Response(data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        item = get_object_or_404(Item, id=kwargs['id'])
+        order = item.order
+        item.delete()
+        if order.references.count() == 0:
+            order.delete()
+            print("se eliminó")
+        return Response(status=status.HTTP_204_NO_CONTENT)

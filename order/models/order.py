@@ -36,7 +36,7 @@ class Order(TShoesModel, models.Model):
     #                              null=True,
     #                              related_name='designer_order')
     # optional address
-    optional_adress = models.CharField(max_length=255, default=None)
+    optional_adress = models.CharField(max_length=255, default=None, null=True)
 
     # The actual status of the order
     status = models.ManyToManyField(Status, default=Status.NONE)

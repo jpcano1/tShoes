@@ -9,6 +9,11 @@ from ..models import Item, Reference
 # Order models
 from order.models import Order, Status
 
+# Customer models
+from users.models import Customer
+
+# Serializer
+from ..serializers import ReferenceModelSerializer
 
 class ReferenceField(serializers.RelatedField):
     """ Reference personalized field """
@@ -17,7 +22,7 @@ class ReferenceField(serializers.RelatedField):
         """  """
         data = {
             'id': value.id,
-            'inventory': value.inventory,
+            # 'inventory': value.inventory,
             'price': value.price,
             'reference_name': value.reference_name
         }
@@ -31,7 +36,7 @@ class OrderField(serializers.RelatedField):
 class ItemModelSerializer(serializers.ModelSerializer):
     """ Item model serializer """
 
-    reference = ReferenceField(read_only=True)
+    reference = ReferenceModelSerializer(read_only=True)
 
     order = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -42,37 +47,51 @@ class ItemModelSerializer(serializers.ModelSerializer):
         ordering = ('-created', '-modified')
 
 class AddItemSerializer(serializers.Serializer):
+    """ Add item serializer """
 
     quantity = serializers.IntegerField()
 
     reference = serializers.PrimaryKeyRelatedField(queryset=Reference.objects.all())
 
+    def validate_quantity(self, data):
+        if data > self.context['stock']:
+            raise serializers.ValidationError("There are not enough references to sell")
+        elif data == 0:
+            raise serializers.ValidationError("Choose at least one reference")
+        return data
+
     def validate(self, data):
+        self.context['user'] = self.context['request'].user
         try:
-            user = data['user']
-            order = Order.objects.get(customer=user, status=Status.NONE)
+            user = self.context['user']
+            order = Order.objects.get(customer_id=user.id)
             self.context['order'] = order
-        except (Order.DoesNotExist, KeyError):
+        except Order.DoesNotExist:
+            pass
+        try:
+            item = Item.objects.get(reference=data['reference'])
+            self.context['item'] = item
+            if data['quantity'] + item.quantity > self.context['stock']:
+                raise serializers.ValidationError("There are not enough references to sell")
+        except Item.DoesNotExist:
             pass
         return data
 
     def create(self, data):
-        order = self.context.get('order')
         reference = data['reference']
         quantity = data['quantity']
-        if order:
+        if self.context.get('item'):
+            item = self.context.get('item')
+            item.quantity += quantity
+            item.save()
+        else:
+            if self.context.get('order'):
+                order = self.context.get('order')
+            else:
+                order = Order.objects.create(customer_id=self.context['request'].user.id)
             item = Item.objects.create(
-                order=order,
-                reference=reference,
-                quantity=quantity
-            )
-            return item
-        order = Order.objects.create()
-        item = Item.objects.create(
-                order=order,
-                reference=reference,
-                quantity=quantity
-            )
+                    order=order,
+                    reference=reference,
+                    quantity=quantity
+                )
         return item
-
-
