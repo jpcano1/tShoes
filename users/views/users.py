@@ -11,10 +11,10 @@ from users.models import User
 # Serializers
 from users.serializers import (UserModelSerializer,
                                UserSignUpSerializer,
-                               UserLoginSerializer,
+                               LoginSerializer,
                                AccountVerificationSerializer)
 
-class UserViewset(viewsets.GenericViewSet,
+class UserViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
                   mixins.ListModelMixin,
                   mixins.RetrieveModelMixin):
@@ -27,14 +27,29 @@ class UserViewset(viewsets.GenericViewSet,
 
     def retrieve(self, request, *args, **kwargs):
         """ add extra data to the response """
-        response = super(UserViewset, self).retrieve(request, *args, **kwargs)
+        response = super(UserViewSet, self).retrieve(request, *args, **kwargs)
         data = UserModelSerializer(response.data).data
         response.data = data
         return response
 
+    def list(self, request, *args, **kwargs):
+        """ The list mixin view """
+        response = super(UserViewSet, self).list(request, *args, **kwargs)
+        return response
+
+    @action(detail=False, methods=['post'])
+    def verify(self, request):
+        """ Verifies an profile through token validation """
+        """  """
+        serializer = AccountVerificationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        data = {"Message": "Congratulations, now go check the page!!!"}
+        return Response(data, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['post'])
     def signup(self, request):
-        """ User sign up """
+        """ Creates an user in the database with is_verified value = False """
         serializer = UserSignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -43,8 +58,7 @@ class UserViewset(viewsets.GenericViewSet,
 
     @action(detail=False, methods=['post'])
     def login(self, request):
-        """ User log in """
-        serializer = UserLoginSerializer(data=request.data)
+        serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user, token = serializer.save()
         data = {
@@ -52,15 +66,3 @@ class UserViewset(viewsets.GenericViewSet,
             'access_token': token
         }
         return Response(data, status=status.HTTP_201_CREATED)
-
-    @action(detail=False, methods=['post'])
-    def verify(self, request):
-        """ Account verification """
-        serializer = AccountVerificationSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        token = serializer.save()
-        data = {
-            "message": "Congratulations, now go buy some shoes!!",
-            "access_token": token
-        }
-        return Response(data, status=status.HTTP_200_OK)

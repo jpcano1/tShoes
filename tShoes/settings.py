@@ -60,7 +60,8 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders'
+    'corsheaders',
+    'anymail',
 ]
 
 LOCAL_APPS = [

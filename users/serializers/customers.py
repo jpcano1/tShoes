@@ -28,14 +28,14 @@ class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
         return data
 
     def create(self, data):
-        """  """
+        """ Creates the user as a customer """
         data.pop('password_confirmation')
-        customer = Customer.objects.create(**data)
+        customer = Customer.objects.create_user(**data)
         self.send_confirmation_email(customer)
         return customer
 
 class CustomerModelSerializer(serializers.ModelSerializer):
-    """  """
+    """ Customer model serializer """
 
     class Meta:
         model = Customer

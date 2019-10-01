@@ -36,6 +36,9 @@ class User(TShoesModel, AbstractUser):
         validators=[phone_regex]
     )
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+
     # The identity for the user of the platform
     identification = models.CharField(
         'Identification document',
@@ -61,9 +64,6 @@ class User(TShoesModel, AbstractUser):
         blank=True,
         null=True
     )
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'identification']
 
     def __str__(self):
         """ String function """

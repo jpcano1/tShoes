@@ -27,58 +27,51 @@ from datetime import timedelta
 from twilio.rest import Client
 
 class AccountVerificationSerializer(serializers.Serializer):
-    """ Account Verification Serializer """
+    """ Account verification Serializer that allows to know which user has a
+    verificated account and which doesn't
+    """
 
     token = serializers.CharField()
 
-    def validate_token(self, data):
-        """ Verify token is valid """
+    def validate(self, data):
+        """ Validate method for the token """
         try:
-            payload = jwt.decode(data, settings.SECRET_KEY, algorithms=['HS256'])
-
+            payload = jwt.decode(data['token'], settings.SECRET_KEY, algorithms=['HS256'])
         except ExpiredSignatureError:
-            raise serializers.ValidationError("Verification link has expired.")
+            raise serializers.ValidationError("The token has expired.")
         except JWTError:
-            raise serializers.ValidationError("Invalid token")
-
-        if payload['type'] != 'email_confirmation':
-            raise serializers.ValidationError("Invalid Token")
+            raise serializers.ValidationError("Error validating token. Ensure is the right token.")
 
         self.context['payload'] = payload
         return data
 
-    def save(self):
-        """ Update user's serify status """
+    def save(self, **kwargs):
+        """ Update the user's verification status """
         payload = self.context['payload']
         user = User.objects.get(username=payload['user'])
         user.is_verified = True
-        token, created = Token.objects.create(user=user)
         user.save()
-        return token.key
 
-class UserLoginSerializer(serializers.Serializer):
-    """ User login Serializer
-    Handle the login request data.
-    """
+
+class LoginSerializer(serializers.Serializer):
+    """ Login serializer to make a login to a User """
 
     email = serializers.CharField()
-    password = serializers.CharField(min_length=8)
+    password = serializers.CharField(min_length=8, max_length=64)
 
     def validate(self, data):
-        """ Check credentials. """
+        """ Function that makes the validation email-password """
         user = authenticate(email=data['email'], password=data['password'])
-
         if not user:
-            raise serializers.ValidationError('Invalid Credentials')
-
+            raise serializers.ValidationError("The credentials provided are incorrect")
         if not user.is_verified:
-            raise serializers.ValidationError("Account is not active yet")
+            raise serializers.ValidationError("The user is not verified, please check your email")
 
         self.context['user'] = user
         return data
 
     def create(self, data):
-        """ Generate or retrieve new Token """
+        """ Get or create token """
         token, created = Token.objects.get_or_create(user=self.context['user'])
         return self.context['user'], token.key
 
@@ -89,6 +82,8 @@ class UserSignUpSerializer(serializers.Serializer):
 
      # Username of the user
     username = serializers.CharField(
+        min_length=4,
+        max_length=20,
         validators=[
             UniqueValidator(queryset=User.objects.all())
         ]
@@ -129,36 +124,35 @@ class UserSignUpSerializer(serializers.Serializer):
     profile_picture = serializers.ImageField(required=False, default=None)
 
     def validate(self, data):
-        """ makes some validations before creation of the user """
+        print(data)
         passwd = data['password']
         passwd_confirmation = data['password_confirmation']
 
-        # password and password confirmation validation
         if passwd_confirmation != passwd:
             raise serializers.ValidationError("Passwords don't match")
 
         password_validation.validate_password(passwd)
+
         return data
 
     def create(self, data):
-        """ Creates the user after the verification """
         data.pop('password_confirmation')
-        user = User.objects.create(**data)
+        user = User.objects.create_user(**data)
         self.send_confirmation_email(user)
         return user
 
-    def send_confirmation_message(self, user):
-        """  """
-        client = Client()
-        verification_token = self.gen_verification_token(user)
-        message = "Welcome! Please verify your number with this code: {}".format(verification_token)
-        from_whatsapp_number = 'whatsapp:+14155238886'
-        to_whatsapp_number = 'whatsapp:{}'.format(user.phone_number)
-
-        client.messages.create(body=message,
-                               from_=from_whatsapp_number,
-                               to=to_whatsapp_number)
-        print("Sending message")
+    # def send_confirmation_message(self, user):
+    #     """  """
+    #     client = Client()
+    #     verification_token = self.gen_verification_token(user)
+    #     message = "Welcome! Please verify your number with this code: {}".format(verification_token)
+    #     from_whatsapp_number = 'whatsapp:+14155238886'
+    #     to_whatsapp_number = 'whatsapp:{}'.format(user.phone_number)
+    #
+    #     client.messages.create(body=message,
+    #                            from_=from_whatsapp_number,
+    #                            to=to_whatsapp_number)
+    #     print("Sending message")
 
     def send_confirmation_email(self, user):
         """ Send account verification link to given user """
@@ -170,15 +164,15 @@ class UserSignUpSerializer(serializers.Serializer):
             {
                 'token': verification_token,
                 'user': user
-            })
+            }
+        )
         msg = EmailMultiAlternatives(subject, content, from_email, [user.email])
         msg.attach(content, 'text/html')
         msg.send()
         print("Sending email")
 
-    @staticmethod
-    def gen_verification_token(user):
-        """ Create JWT token that the user can use to verify its account """
+    def gen_verification_token(self, user):
+        """ create JWT token that the user can use to verify its account. """
         exp_date = timezone.now() + timedelta(days=3)
         payload = {
             'user': user.username,
@@ -200,5 +194,4 @@ class UserModelSerializer(serializers.ModelSerializer):
                   'last_name',
                   'email',
                   'phone_number',
-                  'identification',
-                  'password']
+                  'identification',]
