@@ -58,6 +58,9 @@ class UserViewset(viewsets.GenericViewSet,
         """ Account verification """
         serializer = AccountVerificationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        data = {"message": "Congratulations, now go buy some shoes!!"}
+        token = serializer.save()
+        data = {
+            "message": "Congratulations, now go buy some shoes!!",
+            "access_token": token
+        }
         return Response(data, status=status.HTTP_200_OK)
