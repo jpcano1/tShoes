@@ -59,29 +59,26 @@ class UserLoginSerializer(serializers.Serializer):
     Handle the login request data.
     """
 
-    email = serializers.EmailField()
-    password = serializers.CharField(min_length=8, max_length=64)
+    email = serializers.CharField()
+    password = serializers.CharField(min_length=8)
 
-    # def validate(self, data):
-    #     """ Check credentials. """
-    #     # user = authenticate(username=data['email'], password=data['password'])
-    #     user = User.objects.get(email=data['email'], password=data['password'])
-    #
-    #     if not user:
-    #         raise serializers.ValidationError('Invalid Credentials')
-    #
-    #     if not user.is_verified:
-    #         raise serializers.ValidationError("Account is not active yet")
-    #
-    #     self.context['user'] = user
-    #     return data
+    def validate(self, data):
+        """ Check credentials. """
+        user = authenticate(email=data['email'], password=data['password'])
+
+        if not user:
+            raise serializers.ValidationError('Invalid Credentials')
+
+        if not user.is_verified:
+            raise serializers.ValidationError("Account is not active yet")
+
+        self.context['user'] = user
+        return data
 
     def create(self, data):
         """ Generate or retrieve new Token """
-        user = User.objects.get(email=data['email'])
-        # token, created = Token.objects.get_or_create(user=self.context['user'])
-        token = Token.objects.get_or_create(user=user)
-        return user, token.key
+        token, created = Token.objects.get_or_create(user=self.context['user'])
+        return self.context['user'], token.key
 
 class UserSignUpSerializer(serializers.Serializer):
     """ Class that allows us to create users and to send
@@ -116,7 +113,7 @@ class UserSignUpSerializer(serializers.Serializer):
     )
 
     # phone number field
-    phone_number = serializers.CharField(min_length=8, max_length=64)
+    phone_number = serializers.CharField(validators=[phone_regex], required=True)
 
     # Password
     password = serializers.CharField(min_length=8, max_length=64)
@@ -144,7 +141,8 @@ class UserSignUpSerializer(serializers.Serializer):
     def create(self, data):
         """ Creates the user after the verification """
         data.pop('password_confirmation')
-        user = User.objects.create_user(**data)
+        user = User.objects.create( data['username'], data['email'], data['password'])
+        print(user.password)
         self.send_confirmation_email(user)
         return user
 

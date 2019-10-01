@@ -38,5 +38,6 @@ class ItemViewSet(viewsets.GenericViewSet,
         data['reference'] = self.reference.id
         serializer = AddItemSerializer(data=data)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response("Hola", status=status.HTTP_201_CREATED)
+        item = serializer.save()
+        data = ItemModelSerializer(item).data
+        return Response(data, status=status.HTTP_201_CREATED)

@@ -30,6 +30,7 @@ from reference.models import Reference
 class DesignersViewSet(viewsets.GenericViewSet,
                        mixins.ListModelMixin,
                        mixins.CreateModelMixin,
+                       mixins.DestroyModelMixin,
                        mixins.RetrieveModelMixin):
     """ The viewset of the designers """
 
@@ -89,10 +90,9 @@ class DesignerInventoryViewSet(viewsets.GenericViewSet,
         return Response(data, status=status.HTTP_201_CREATED)
 
 class DesignerReferenceViewSet(viewsets.GenericViewSet,
+                               mixins.ListModelMixin,
                                mixins.CreateModelMixin,
                                mixins.RetrieveModelMixin,
-                               mixins.ListModelMixin,
-                               mixins.DestroyModelMixin,
                                mixins.UpdateModelMixin):
     """ Viewset of the relationship designer - inventory - reference """
 

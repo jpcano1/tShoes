@@ -8,7 +8,7 @@ from django.core.validators import RegexValidator
 # Utilities
 from utils.models import TShoesModel
 
-class User(AbstractUser, TShoesModel):
+class User(TShoesModel, AbstractUser):
     """ User Model
      Extends from django's abstract base user
      """
@@ -63,7 +63,7 @@ class User(AbstractUser, TShoesModel):
     )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'identification']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'identification']
 
     def __str__(self):
         """ String function """

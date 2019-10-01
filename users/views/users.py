@@ -23,14 +23,12 @@ class UserViewset(viewsets.GenericViewSet,
 
     queryset = User.objects.all()
     serializer_class = UserModelSerializer
-    lookup_field = 'pk'
+    lookup_field = 'id'
 
     def retrieve(self, request, *args, **kwargs):
         """ add extra data to the response """
         response = super(UserViewset, self).retrieve(request, *args, **kwargs)
-        data = {
-            'user': response.data
-        }
+        data = UserModelSerializer(response.data).data
         response.data = data
         return response
 
