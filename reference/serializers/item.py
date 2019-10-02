@@ -7,7 +7,7 @@ from rest_framework import serializers
 from ..models import Item, Reference
 
 # Order models
-from order.models import Order, Status
+from order.models import Order
 
 # Customer models
 from users.models import Customer
@@ -43,6 +43,13 @@ class ItemModelSerializer(serializers.ModelSerializer):
 
     order = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    def validate_quantity(self, data):
+        if data <= 0:
+            raise serializers.ValidationError("Choose at least one reference")
+        elif data > self.context['reference'].stock:
+            raise serializers.ValidationError("There are not enough references")
+        return data
+
     class Meta:
         """ Meta Class """
         model = Item
@@ -67,7 +74,7 @@ class AddItemSerializer(serializers.Serializer):
         self.context['user'] = self.context['request'].user
         try:
             user = self.context['user']
-            order = Order.objects.get(customer_id=user.id)
+            order = Order.objects.get(customer_id=user.id, status=0)
             self.context['order'] = order
         except Order.DoesNotExist:
             pass
@@ -79,7 +86,8 @@ class AddItemSerializer(serializers.Serializer):
             elif data['quantity'] + item.quantity < 0:
                 raise serializers.ValidationError("You can't have less than 0 references")
         except Item.DoesNotExist:
-            pass
+            if data['quantity'] <= 0:
+                raise serializers.ValidationError("Choose at least one reference")
         return data
 
     def create(self, data):

@@ -11,6 +11,7 @@ from ..models import Customer
 
 # Serializers
 from .users import UserModelSerializer
+from order.serializers import OrderModelSerializer
 
 class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
     """ Serializer of the sign up customer model,
@@ -37,6 +38,9 @@ class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
 class CustomerModelSerializer(serializers.ModelSerializer):
     """ Customer model serializer """
 
+    # Orders of the customer
+    orders = OrderModelSerializer(many=True, read_only=True)
+
     class Meta:
         model = Customer
         fields = UserModelSerializer.Meta.fields.copy()
@@ -44,3 +48,4 @@ class CustomerModelSerializer(serializers.ModelSerializer):
         fields.append('city')
         fields.append('country')
         fields.append('zip_code')
+        fields.append('orders')

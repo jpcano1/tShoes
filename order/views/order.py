@@ -11,8 +11,7 @@ from ..serializers import OrderModelSerializer
 
 class OrderViewSet(viewsets.GenericViewSet,
                    mixins.ListModelMixin,
-                   mixins.RetrieveModelMixin,
-                   mixins.DestroyModelMixin):
+                   mixins.RetrieveModelMixin):
     """ Order view set """
 
     queryset = Order.objects.all()

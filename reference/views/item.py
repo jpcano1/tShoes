@@ -7,9 +7,6 @@ from rest_framework import mixins, viewsets, status
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 
-# Order models
-from order.models import Order
-
 # Reference models
 from ..models import Reference
 
@@ -56,5 +53,4 @@ class ItemViewSet(viewsets.GenericViewSet,
         item.delete()
         if order.references.count() == 0:
             order.delete()
-            print("se eliminó")
         return Response(status=status.HTTP_204_NO_CONTENT)

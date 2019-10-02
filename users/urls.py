@@ -19,6 +19,10 @@ router.register(r'designers/(?P<designer>[0-9]+)/inventory/(?P<inventory>[0-9]+)
                 designer_views.DesignerReferenceViewSet,
                 basename='designer_reference')
 router.register(r'customers', customer_views.CustomerViewSet, basename='customer')
+router.register(r'customers/(?P<customer>[0-9]+)/orders', customer_views.CustomerOrderViewSet, basename='customer_order')
+router.register(r'customers/(?P<customer>[0-9]+)/orders/(?P<order>[0-9]+)/items',
+                customer_views.CustomerItemViewSet,
+                basename='customer_item')
 
 urlpatterns = [
     path('', include(router.urls)),

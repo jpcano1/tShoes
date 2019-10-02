@@ -37,5 +37,6 @@ class OrderModelSerializer(serializers.ModelSerializer):
         fields = ['id',
                   'customer',
                   'optional_address',
+                  'status',
                   'items']
 
