@@ -36,6 +36,11 @@ class ItemModelSerializer(serializers.ModelSerializer):
     # The order related to the item
     order = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    def validate(self, data):
+        order = self.context['item'].order
+        if order.status != 0:
+            raise serializers.ValidationError("You cannot update this order")
+        return data
     def validate_quantity(self, data):
         """ Validate some logic to the quantity field
             :param data is the validation field

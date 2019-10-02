@@ -112,11 +112,12 @@ class CustomerItemViewSet(viewsets.GenericViewSet,
 
     def update(self, request, *args, **kwargs):
         item = get_object_or_404(Item, id=kwargs['id'])
-        serializer = ItemModelSerializer(data=request.data, context={
-            'reference': item.reference
-        })
+        partial = request.method == 'PATCH'
+        serializer = ItemModelSerializer(item, data=request.data, context={
+            'reference': item.reference,
+            'item': item
+        }, partial=partial)
         serializer.is_valid(raise_exception=True)
-        item.quantity = request.data['quantity']
-        item.save()
+        serializer.save()
         data = ItemModelSerializer(item).data
         return Response(data, status=status.HTTP_200_OK)
