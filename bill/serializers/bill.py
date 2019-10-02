@@ -18,6 +18,7 @@ from order.models import Order
 class CreateBillSerializer(serializers.Serializer):
     """ Bill model serializer """
 
+    # The order related to the bill
     order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
 
     def validate_order(self, data):
@@ -33,14 +34,17 @@ class CreateBillSerializer(serializers.Serializer):
             Bill model to be created
             :returns the bill created after the entire process
         """
+        # Total cost of the order
         total = 0
         order = data['order']
+        # All the items in the order
         items = Item.objects.filter(order=order)
         for item in items:
             reference = item.reference
-            total += item.quantity * item.reference.price
+            total += item.quantity * reference.price
             reference.stock -= item.quantity
             reference.save()
+        # Changes the status of the order
         order.status = 1
         order.save()
         bill = Bill.objects.create(order=order, total_price=total)
@@ -49,8 +53,10 @@ class CreateBillSerializer(serializers.Serializer):
 class BillModelSerializer(serializers.ModelSerializer):
     """ Bill Model Serializer """
 
+    # The order related to the bill
     order = OrderModelSerializer(read_only=True)
     class Meta:
+        """ Meta Class """
         model = Bill
         fields = '__all__'
 

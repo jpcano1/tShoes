@@ -15,20 +15,11 @@ class CreateInventorySerializer(serializers.Serializer):
     # The desginer of the inventory
     designer = serializers.PrimaryKeyRelatedField(queryset=Designer.objects.all())
 
-    # This hidden field lets the current user create the inventory without
-    # user's interaction
-    # designer = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    # Make validations on sprint 3
-    # def validate(self, data):
-    #     """ Respective validations: The creator is a designer  """
-    #
-    #     if self.context['request'].user != data['designer']:
-    #         raise serializers.ValidationError("You're not allowed to create an inventory. You are not a designer")
-    #
-    #     return data
-
     def validate_designer(self, data):
+        """ Validates the designer
+            :param data the designer that is going to be validated
+            :returns the validated data
+        """
         designer = data
         q = Inventory.objects.filter(designer=designer)
         if q.exists():
@@ -36,12 +27,14 @@ class CreateInventorySerializer(serializers.Serializer):
         return data
 
     def create(self, data):
-        """ Creates an inventory for the shoes that are gonna be sold """
+        """ Creates an inventory for the shoes that are gonna be sold
+            :param data the data that is going to be passed to the inventory creation
+        """
         inventory = Inventory.objects.create(**data)
         return inventory
 
 class DesignerField(serializers.RelatedField):
-
+    """ This is a personalized serializer for the Designer """
     def to_representation(self, value):
         return value.get_full_name()
 

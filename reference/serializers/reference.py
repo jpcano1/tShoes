@@ -39,7 +39,10 @@ class CreateReferenceSerializer(serializers.Serializer):
     stock = serializers.IntegerField(required=True)
 
     def create(self, data):
-        """ Creates the reference and adds it into an inventory """
+        """ Creates the reference and adds it into an inventory
+            :param data the validated data
+            :returns the reference created
+        """
         reference = Reference.objects.create(**data)
         return reference
 

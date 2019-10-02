@@ -14,6 +14,9 @@ class BillViewSet(viewsets.GenericViewSet,
                   mixins.RetrieveModelMixin):
     """ Bill Viewset """
 
+    # The entire set of bills
     queryset = Bill.objects.all()
+    # Serializer class
     serializer_class = BillModelSerializer
+    # The field that's going to be looked for the detail methods
     lookup_field = 'id'

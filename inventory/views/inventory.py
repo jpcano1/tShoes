@@ -18,5 +18,5 @@ class InventoryViewSet(viewsets.GenericViewSet,
     queryset = Inventory.objects.all()
     # The serializer class of the inventory model
     serializer_class = InventoryModelSerializer
-    # The field that's is going to be looked for
+    # The field that's is going to be looked for the detail methods
     lookup_field = 'id'

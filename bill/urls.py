@@ -11,6 +11,7 @@ from .views import bill as bill_views
 router = DefaultRouter()
 router.register(r'bills', bill_views.BillViewSet, basename='bill')
 
+# Url patterns
 urlpatterns = [
     path('', include(router.urls))
 ]

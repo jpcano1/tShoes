@@ -47,3 +47,7 @@ class Order(TShoesModel, models.Model):
 
     # The actual status of the order
     status = models.PositiveSmallIntegerField(choices=STATUS_TYPE_CHOICES, default=NONE)
+
+    def __str__(self):
+        """ toString function """
+        return "Order {} with customer: {} and status: {}".format(str(self.id), self.customer.get_full_name(), self.status)

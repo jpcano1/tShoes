@@ -12,6 +12,7 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'inventory', inventory_views.InventoryViewSet, basename='inventory')
 
+# Url patterns
 urlpatterns = [
     path('', include(router.urls))
 ]
