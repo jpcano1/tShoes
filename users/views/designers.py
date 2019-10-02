@@ -93,11 +93,13 @@ class DesignerReferenceViewSet(viewsets.GenericViewSet,
                                mixins.ListModelMixin,
                                mixins.CreateModelMixin,
                                mixins.RetrieveModelMixin,
-                               mixins.UpdateModelMixin):
+                               mixins.UpdateModelMixin,
+                               mixins.DestroyModelMixin):
     """ Viewset of the relationship designer - inventory - reference """
 
     queryset = Reference.objects.all()
     serializer_class = ReferenceModelSerializer
+    lookup_field = 'id'
 
     def dispatch(self, request, *args, **kwargs):
         """ Retrieves the desginer and its respective inventory """

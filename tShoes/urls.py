@@ -31,5 +31,7 @@ urlpatterns = [
     path('', include(('reference.urls', 'reference'), namespace='reference')),
     # Order
     path('', include(('order.urls', 'order'), namespace='order')),
+    # Bill
+    path('', include(('bill.urls', 'bill'), namespace='bill')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

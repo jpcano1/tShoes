@@ -8,7 +8,7 @@ class Bill(TShoesModel, models.Model):
     """ Class that represents the bill of the order """
 
     # The order that owns the bill
-    order = models.OneToOneField('order.Order', on_delete=models.CASCADE)
+    order = models.OneToOneField('order.Order', on_delete=models.CASCADE, related_name='bill')
 
     # Total price of the
     total_price = models.FloatField(default=0)
