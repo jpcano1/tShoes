@@ -84,21 +84,14 @@ class AddItemSerializer(serializers.Serializer):
             # Validates the customer already has an stateless order
             user = self.context['user']
             order = Order.objects.get(customer_id=user.id, status=0)
-            self.context['order'] = order
-        except Order.DoesNotExist:
+            data['order'] = order
+
+            item = Item.objects.get(reference=data['reference'], order=order)
+            data['item'] = item
+        except (Order.DoesNotExist, Item.DoesNotExist):
             pass
-        try:
-            # Validates the added item already exists in the stateless order
-            item = Item.objects.get(reference=data['reference'])
-            self.context['item'] = item
-            # Validates the number of some reference that's going to be bought
-            # if data['quantity'] + item.quantity > self.context['stock']:
-            #     raise serializers.ValidationError("There are not enough references to sell")
-            # elif data['quantity'] + item.quantity < 0:
-            #     raise serializers.ValidationError("You can't have less than 0 references")
-        except Item.DoesNotExist:
-            if data['quantity'] <= 0:
-                raise serializers.ValidationError("Choose at least one reference")
+        if data['quantity'] <= 0:
+            raise serializers.ValidationError("Choose at least one reference")
         return data
 
     def create(self, data):
@@ -108,13 +101,13 @@ class AddItemSerializer(serializers.Serializer):
         """
         reference = data['reference']
         quantity = data['quantity']
-        if self.context.get('item'):
-            item = self.context.get('item')
+        if data.get('item'):
+            item = data['item']
             item.quantity = quantity
             item.save()
         else:
-            if self.context.get('order'):
-                order = self.context.get('order')
+            if data.get('order'):
+                order = data['order']
             else:
                 order = Order.objects.create(customer_id=self.context['request'].user.id)
             item = Item.objects.create(

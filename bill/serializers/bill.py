@@ -41,8 +41,10 @@ class CreateBillSerializer(serializers.Serializer):
         items = Item.objects.filter(order=order)
         for item in items:
             reference = item.reference
-            total += item.quantity * reference.price
+            if reference.stock < item.quantity:
+                raise serializers.ValidationError("There are not enough references of this product: {}".format(str(reference)))
             reference.stock -= item.quantity
+            total += item.quantity * reference.price
             reference.save()
         # Changes the status of the order
         order.status = 1

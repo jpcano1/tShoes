@@ -29,6 +29,7 @@ class CreateInventorySerializer(serializers.Serializer):
     def create(self, data):
         """ Creates an inventory for the shoes that are gonna be sold
             :param data the data that is going to be passed to the inventory creation
+            :returns the created inventory of the designer
         """
         inventory = Inventory.objects.create(**data)
         return inventory
