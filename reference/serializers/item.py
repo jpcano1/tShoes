@@ -91,9 +91,10 @@ class AddItemSerializer(serializers.Serializer):
             order = Order.objects.get(customer_id=user.id, status=0)
             data['order'] = order
 
-            item = Item.objects.get(reference=data['reference'], order=order)
-            data['item'] = item
-        except (Order.DoesNotExist, Item.DoesNotExist):
+            item = Item.objects.filter(reference=data['reference'], order=order)
+            if item:
+                raise serializers.ValidationError("You already choose this item in your order")
+        except Order.DoesNotExist:
             pass
         if data['quantity'] <= 0:
             raise serializers.ValidationError("Choose at least one reference")
@@ -106,18 +107,13 @@ class AddItemSerializer(serializers.Serializer):
         """
         reference = data['reference']
         quantity = data['quantity']
-        if data.get('item'):
-            item = data['item']
-            item.quantity = quantity
-            item.save()
+        if data.get('order'):
+            order = data['order']
         else:
-            if data.get('order'):
-                order = data['order']
-            else:
-                order = Order.objects.create(customer_id=self.context['request'].user.id)
-            item = Item.objects.create(
-                    order=order,
-                    reference=reference,
-                    quantity=quantity
-                )
+            order = Order.objects.create(customer_id=self.context['request'].user.id)
+        item = Item.objects.create(
+            order=order,
+            reference=reference,
+            quantity=quantity
+        )
         return item
