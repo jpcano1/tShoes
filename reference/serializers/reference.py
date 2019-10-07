@@ -39,17 +39,25 @@ class CreateReferenceSerializer(serializers.Serializer):
     stock = serializers.IntegerField(required=True)
 
     def create(self, data):
-        """ Creates the reference and adds it into an inventory
-            :param data the validated data
-            :returns the reference created
+        """
+            Creates the reference and adds it into an inventory
+            :param data: the validated data
+            :return: the reference created
         """
         reference = Reference.objects.create(**data)
         return reference
 
 class InventoryField(serializers.RelatedField):
-    """ Allows me to create a personalized field in the model serializer """
+    """
+        Allows me to create a personalized field in the model serializer
+    """
 
     def to_representation(self, value):
+        """
+            Allows me to create a serialized object for the field
+            :param value: The value that's going to be serialized
+            :return: The serialized field
+        """
         data = {
             'id': value.id,
             'designer': value.designer.get_full_name()

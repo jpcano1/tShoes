@@ -13,6 +13,11 @@ class ItemField(serializers.RelatedField):
     """ Item personalized serializer """
 
     def to_representation(self, value):
+        """
+            Method that allows me to make a representation of the field that I want to serialize
+        :param value: The value that's going to be serialized
+        :return: The serialized value.
+        """
         reference = value.reference
         data = {
             'id': value.id,

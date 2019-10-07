@@ -9,8 +9,10 @@ from .users import UserSignUpSerializer
 # Customer models
 from ..models import Customer
 
-# Serializers
+# User Serializers
 from .users import UserModelSerializer
+
+# Order Serializers
 from order.serializers import OrderModelSerializer
 
 class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
@@ -29,7 +31,11 @@ class CustomerSignUpSerializer(UserSignUpSerializer, serializers.Serializer):
         return data
 
     def create(self, data):
-        """ Creates the user as a customer """
+        """
+            Creates the user as a customer
+            :param data: The validated data
+            :return: The created customer
+        """
         data.pop('password_confirmation')
         customer = Customer.objects.create_user(**data)
         self.send_confirmation_email(customer)

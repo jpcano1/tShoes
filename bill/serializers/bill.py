@@ -22,17 +22,18 @@ class CreateBillSerializer(serializers.Serializer):
     order = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
 
     def validate_order(self, data):
-        """ :param data is the order to be validated
-            :exception if the order is placed, generates exception
-            :returns data validated """
+        """ :param data: is the order to be validated
+            :exception: if the order is placed, generates exception
+            :return: data validated
+        """
         if data.status != 0:
             raise serializers.ValidationError('The order is placed')
         return data
 
     def create(self, data):
-        """ :param data the data that is going to be passed to the
+        """ :param data: the data that is going to be passed to the
             Bill model to be created
-            :returns the bill created after the entire process
+            :return: the bill created after the entire process
         """
         # Total cost of the order
         total = 0

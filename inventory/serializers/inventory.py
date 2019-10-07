@@ -18,7 +18,7 @@ class CreateInventorySerializer(serializers.Serializer):
     def validate_designer(self, data):
         """ Validates the designer
             :param data the designer that is going to be validated
-            :returns the validated data
+            :return: the validated data
         """
         designer = data
         q = Inventory.objects.filter(designer=designer)
@@ -29,14 +29,20 @@ class CreateInventorySerializer(serializers.Serializer):
     def create(self, data):
         """ Creates an inventory for the shoes that are gonna be sold
             :param data the data that is going to be passed to the inventory creation
-            :returns the created inventory of the designer
+            :return: the created inventory of the designer
         """
         inventory = Inventory.objects.create(**data)
         return inventory
 
 class DesignerField(serializers.RelatedField):
     """ This is a personalized serializer for the Designer """
+
     def to_representation(self, value):
+        """
+        Transfoms the value into a serilized object
+        :param value: The field that's going to be serialized
+        :return: The serialized field
+        """
         return value.get_full_name()
 
 class InventoryModelSerializer(serializers.ModelSerializer):

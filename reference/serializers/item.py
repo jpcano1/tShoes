@@ -13,8 +13,9 @@ class ReferenceField(serializers.RelatedField):
     """ Reference personalized field """
 
     def to_representation(self, value):
-        """ Method that transforms the value into representation JSON
-            :param value is the object that's going to be rendered
+        """
+            Method that transforms the value into representation JSON
+            :param value: is the object that's going to be rendered
          """
         data = {
             'id': value.id,
@@ -37,14 +38,20 @@ class ItemModelSerializer(serializers.ModelSerializer):
     order = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def validate(self, data):
+        """
+            Validate the data before creation
+            :param data: The entire data that's going to be validated
+            :return: The validated data
+        """
         order = self.context['item'].order
         if order.status != 0:
             raise serializers.ValidationError("You cannot update this order")
         return data
+
     def validate_quantity(self, data):
         """ Validate some logic to the quantity field
-            :param data is the validation field
-            :returns the data already validated
+            :param data: is the validation field
+            :return: the data already validated
          """
         if data <= 0:
             raise serializers.ValidationError("Choose at least one reference")
@@ -68,9 +75,10 @@ class AddItemSerializer(serializers.Serializer):
     reference = serializers.PrimaryKeyRelatedField(queryset=Reference.objects.all())
 
     def validate_quantity(self, data):
-        """ Validates some logic of the quantity field
+        """
+            Validates some logic of the quantity field
             :param data the data that's going to be validated
-            :returns the validated data
+            :return: the validated data
          """
         if data > self.context['stock']:
             raise serializers.ValidationError("There are not enough references to sell")
@@ -79,10 +87,11 @@ class AddItemSerializer(serializers.Serializer):
         return data
 
     def validate(self, data):
-        """ Validates the data that's going to be
+        """
+            Validates the data that's going to be
             passed for creation of the item
             :param data the data that's going to be processed
-            :returns the validated data
+            :return: the validated data
          """
         self.context['user'] = self.context['request'].user
         try:
@@ -101,9 +110,10 @@ class AddItemSerializer(serializers.Serializer):
         return data
 
     def create(self, data):
-        """ Creates the item with the validated data
-            :param data The validated data
-            :returns the created item in the order
+        """
+            Creates the item with the validated data
+            :param data: The validated data
+            :return: the created item in the order
         """
         reference = data['reference']
         quantity = data['quantity']
