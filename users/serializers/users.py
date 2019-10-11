@@ -26,6 +26,9 @@ from datetime import timedelta
 # Twilio messages
 from twilio.rest import Client
 
+# Nexmo Messages
+from nexmo import *
+
 class AccountVerificationSerializer(serializers.Serializer):
     """ Account verification Serializer that allows to know which user has a
     verificated account and which doesn't
@@ -141,19 +144,6 @@ class UserSignUpSerializer(serializers.Serializer):
         user = User.objects.create_user(**data)
         self.send_confirmation_email(user)
         return user
-
-    # def send_confirmation_message(self, user):
-    #     """  """
-    #     client = Client()
-    #     verification_token = self.gen_verification_token(user)
-    #     message = "Welcome! Please verify your number with this code: {}".format(verification_token)
-    #     from_whatsapp_number = 'whatsapp:+14155238886'
-    #     to_whatsapp_number = 'whatsapp:{}'.format(user.phone_number)
-    #
-    #     client.messages.create(body=message,
-    #                            from_=from_whatsapp_number,
-    #                            to=to_whatsapp_number)
-    #     print("Sending message")
 
     def send_confirmation_email(self, user):
         """ Send account verification link to given user """

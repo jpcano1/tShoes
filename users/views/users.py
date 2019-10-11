@@ -40,7 +40,6 @@ class UserViewSet(viewsets.GenericViewSet,
     @action(detail=False, methods=['post'])
     def verify(self, request):
         """ Verifies an profile through token validation """
-        """  """
         serializer = AccountVerificationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -58,6 +57,11 @@ class UserViewSet(viewsets.GenericViewSet,
 
     @action(detail=False, methods=['post'])
     def login(self, request):
+        """
+
+            :param request:
+            :return:
+        """
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user, token = serializer.save()
