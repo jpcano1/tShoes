@@ -155,8 +155,7 @@ class UserSignUpSerializer(serializers.Serializer):
             {
                 'token': verification_token,
                 'user': user
-            }
-        )
+            })
         msg = EmailMultiAlternatives(subject, content, from_email, [user.email])
         msg.attach(content, 'text/html')
         msg.send()
