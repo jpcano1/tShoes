@@ -6,7 +6,7 @@ RUN mkdir /app
 WORKDIR /app
 
 # Add current directory code to working directory
-ADD . /app/
+ADD ../../.. /app/
 
 # set default environment variables
 ENV PYTHONUNBUFFERED 1
@@ -16,7 +16,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # set project environment variables
 # grab these via Python's os.environ
 # these are 100% optional here
-ENV PORT=8888
+#ENV PORT=8888
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -39,5 +39,5 @@ RUN pip3 install -r requirements.txt
 RUN python3 manage.py makemigrations
 RUN python3 manage.py migrate
 
-EXPOSE 8888
-CMD gunicorn tShoes.wsgi:application --bind 0.0.0.0:$PORT
+#EXPOSE 8888
+#CMD gunicorn tShoes.wsgi:application --bind 0.0.0.0:$PORT
