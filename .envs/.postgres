@@ -1,6 +1,6 @@
-# PostgreSQL
-POSTGRES_HOST=postgres
-POSTGRES_PORT=5432
-POSTGRES_DB=cride
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=
+POSTGRES_DB=mydb
+POSTGRES_USER=example
+POSTGRES_PASSWORD=secret
+PGDATA=/var/lib/postgresql/data/pgdata
+DB_HOST=db
+DB_PORT=5432

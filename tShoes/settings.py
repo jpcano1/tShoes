@@ -112,16 +112,11 @@ WSGI_APPLICATION = 'tShoes.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'postgres',
-        'POST': 5432
-        # 'NAME': 'tshoes',
-        # 'USER': 'jpcano1@tshoes-db',
-        # 'PASSWORD': 'tSh03s2503',
-        # 'HOST': 'tshoes-db.postgres.database.azure.com',
-        # 'PORT': '5432'
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT')
     }
 }
 
