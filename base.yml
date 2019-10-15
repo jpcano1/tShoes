@@ -1,0 +1,13 @@
+version: "2"
+
+services:
+  db:
+    image: postgres
+    env_file: .envs/.postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data/pgdata
+
+  web:
+    build:
+      context: .
+    env_file: .envs/.postgres

@@ -1,18 +1,25 @@
-version: '3'
+version: '2'
 
 services:
-  django:
+  db:
+    extends:
+      file: base.yml
+      service: db
+
+  web:
+    extends:
+      file: base.yml
+      service: web
     build:
-      context: .
-      dockerfile: ./compose/local/django/Dockerfile
+      args:
+        - DJANGO_ENV=dev
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
-    command: ./compose/local/django/start.sh
-  db:
-    image: postgres
-    env_file:
-      - ./.envs/.postgres
+volumes:
+  db_data:
+    external: true

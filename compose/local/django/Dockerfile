@@ -1,12 +1,18 @@
 # Base Image
 FROM python:3.6
 
+ARG DJANGO_ENV
+
+ENV WEBAPP_DIR /app
+
 # create and set working directory
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir $WEBAPP_DIR
+WORKDIR $WEBAPP_DIR
 
 # Add current directory code to working directory
-ADD ../../.. /app/
+ADD . $WEBAPP_DIR
+ADD requirements/base.txt $WEBAPP_DIR
+ADD requirements/$DJANGO_ENV.txt $WEBAPP_DIR
 
 # set default environment variables
 ENV PYTHONUNBUFFERED 1
@@ -25,6 +31,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-pip \
         python3-dev \
         python3-venv \
+        apt-utils \
         git \
         && \
         apt-get clean && \
@@ -34,10 +41,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip3 install --upgrade pip
 
 # Install project dependencies
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r $DJANGO_ENV.txt
 
-RUN python3 manage.py makemigrations
-RUN python3 manage.py migrate
-
-#EXPOSE 8888
-#CMD gunicorn tShoes.wsgi:application --bind 0.0.0.0:$PORT
+#RUN python3 manage.py makemigrations
+#RUN python3 manage.py migrate
