@@ -10,4 +10,5 @@ services:
   web:
     build:
       context: .
+      dockerfile: compose/local/django/Dockerfile
     env_file: .envs/.postgres
