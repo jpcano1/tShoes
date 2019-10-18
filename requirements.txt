@@ -19,7 +19,7 @@ argon2-cffi>=18.3.0
 whitenoise>=4.1.2
 
 # JWT Library
-python-jose>=1.7.1
+python-jose>=3.0
 
 # CORS Headers
 django-cors-headers>=3.0.2
@@ -35,3 +35,7 @@ twilio>=6.31
 
 # SMS API Nexmo
 nexmo
+
+# Auth0 Dependencies
+social-auth-app-django>=3.1
+python-dotenv>=0.9

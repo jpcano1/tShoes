@@ -62,6 +62,7 @@ THIRD_PARTY_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'anymail',
+    'social_django',
 ]
 
 LOCAL_APPS = [
@@ -195,9 +196,17 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+# Twilio Keys
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
 FROM_NUMBER = os.environ.get('FROM_NUMBER')
 
+# Nexmo Keys
 NEXMO_ACCOUNT_KEY = os.environ.get('NEXMO_ACCOUNT_KEY')
 NEXMO_ACCOUNT_SECRET = os.environ.get('NEXMO_ACCOUNT_SECRET')
+
+# Auth0 Keys
+SOCIAL_AUTH_TRAILING_SLASH = False  # Remove trailing slash from routes
+SOCIAL_AUTH_AUTH0_DOMAIN = 'YOUR_DOMAIN'
+SOCIAL_AUTH_AUTH0_KEY = 'YOUR_CLIENT_ID'
+SOCIAL_AUTH_AUTH0_SECRET = 'YOUR_CLIENT_SECRET'
