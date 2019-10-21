@@ -24,7 +24,7 @@ urlpatterns = [
 
     # Project Routes
     # Users
-    path('', include(('users.urls', 'users'), namespace='users')),
+    path('', include('users.urls')),
     # Inventory
     path('', include(('inventory.urls', 'inventory'), namespace='inventory')),
     # Reference
