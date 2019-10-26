@@ -41,4 +41,4 @@ social-auth-app-django>=3.1
 python-dotenv>=0.9
 
 # Auth0 Python
-auth0-python
+auth0-python==2.0.1

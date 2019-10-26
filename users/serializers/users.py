@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, password_validation
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 
 # Django Rest Framework models
 from rest_framework import serializers
@@ -23,11 +24,11 @@ from jose import *
 from django.utils import timezone
 from datetime import timedelta
 
-# Twilio messages
-from twilio.rest import Client
-
 # Nexmo Messages
 from nexmo import *
+
+# Auth0 Dependencies
+from auth0.v2 import authentication
 
 class AccountVerificationSerializer(serializers.Serializer):
     """ Account verification Serializer that allows to know which user has a
@@ -82,6 +83,7 @@ class UserSignUpSerializer(serializers.Serializer):
     """ Class that allows us to create users and to send
         verification token to the user through the email.
     """
+    database = authentication.Database(domain=settings.SOCIAL_AUTH_AUTH0_DOMAIN)
 
      # Username of the user
     username = serializers.CharField(
@@ -139,8 +141,16 @@ class UserSignUpSerializer(serializers.Serializer):
         return data
 
     def create(self, data):
-        """  """
+        """
+
+        :param data:
+        :return:
+        """
         data.pop('password_confirmation')
+        self.database.signup(client_id=settings.SOCIAL_AUTH_AUTH0_KEY,
+                             email=data['email'],
+                             password=data['password'],
+                             connection=settings.AUTH0_DATABASE_CONNECTION)
         user = User.objects.create_user(**data)
         self.send_confirmation_email(user)
         return user

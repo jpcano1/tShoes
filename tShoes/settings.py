@@ -215,6 +215,7 @@ SOCIAL_AUTH_AUTH0_SCOPE = [
     'email'
 ]
 SOCIAL_AUTH_AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
+AUTH0_DATABASE_CONNECTION = os.environ.get('AUTH0_DATABASE_CONNECTION')
 AUDIENCE = None
 if os.environ.get('AUTH0_AUDIENCE'):
     AUDIENCE = os.environ.get('AUTH0_AUDIENCE')
