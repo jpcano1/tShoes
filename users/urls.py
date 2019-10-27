@@ -2,7 +2,6 @@
 
 # Django
 from django.urls import path, include
-from django.conf.urls import url
 
 # Django Rest Framework
 from rest_framework.routers import DefaultRouter

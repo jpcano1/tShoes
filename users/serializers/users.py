@@ -60,11 +60,17 @@ class AccountVerificationSerializer(serializers.Serializer):
 class LoginSerializer(serializers.Serializer):
     """ Login serializer to make a login to a User """
 
+    database = authentication.Database(settings.SOCIAL_AUTH_AUTH0_DOMAIN)
+
     email = serializers.CharField()
     password = serializers.CharField(min_length=8, max_length=64)
 
     def validate(self, data):
         """ Function that makes the validation email-password """
+        self.database.login(client_id=settings.SOCIAL_AUTH_AUTH0_KEY,
+                                        connection=settings.AUTH0_DATABASE_CONNECTION,
+                                        username=data['email'],
+                                        password=data['password'])
         user = authenticate(email=data['email'], password=data['password'])
         if not user:
             raise serializers.ValidationError("The credentials provided are incorrect")

@@ -78,6 +78,7 @@ class UserViewSet(viewsets.GenericViewSet,
 
     def list(self, request, *args, **kwargs):
         """ The list mixin view """
+        print(request.user)
         response = super(UserViewSet, self).list(request, *args, **kwargs)
         return response
 
