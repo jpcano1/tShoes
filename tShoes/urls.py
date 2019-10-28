@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+import rest_framework.urls
 
 urlpatterns = [
     # Django routes
@@ -33,5 +34,8 @@ urlpatterns = [
     path('', include(('order.urls', 'order'), namespace='order')),
     # Bill
     path('', include(('bill.urls', 'bill'), namespace='bill')),
+
+    # Rest framework
+    path('root/', include(rest_framework.urls))
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

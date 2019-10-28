@@ -17,6 +17,7 @@ from urllib.parse import urlencode
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser
 
 # Models
 from users.models import User
@@ -33,6 +34,9 @@ def index(request):
         return redirect(dashboard)
     else:
         return render(request, 'auth/index.html')
+
+def email_verified(request):
+    return render(request, 'auth/verification.html')
 
 @login_required
 def dashboard(request):
@@ -78,7 +82,6 @@ class UserViewSet(viewsets.GenericViewSet,
 
     def list(self, request, *args, **kwargs):
         """ The list mixin view """
-        print(request.user)
         response = super(UserViewSet, self).list(request, *args, **kwargs)
         return response
 
@@ -103,7 +106,17 @@ class UserViewSet(viewsets.GenericViewSet,
     @action(detail=False, methods=['post'])
     def login(self, request):
         """
+            Login Method passwordless
+            :param request: The request done by the user
+            :return: The response of the request
+        """
+        serializer = LoginSerializer.start(data=request.data)
+        return Response(serializer, status=status.HTTP_201_CREATED)
 
+    @action(detail=False, methods=['post'])
+    def code_verify(self, request):
+        """
+            Verifies the email and the auth code are correct
             :param request:
             :return:
         """
@@ -111,7 +124,7 @@ class UserViewSet(viewsets.GenericViewSet,
         serializer.is_valid(raise_exception=True)
         user, token = serializer.save()
         data = {
-            'user': UserModelSerializer(user).data,
-            'access_token': token
+            "user": UserModelSerializer(user).data,
+            "access_token": token
         }
-        return Response(data, status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_200_OK)

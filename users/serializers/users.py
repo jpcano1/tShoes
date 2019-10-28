@@ -12,6 +12,7 @@ from django.conf import settings
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import PermissionDenied
 
 # Models
 from users.models import User
@@ -29,6 +30,9 @@ from nexmo import *
 
 # Auth0 Dependencies
 from auth0.v2 import authentication
+from auth0.v2.authentication import base
+
+import requests
 
 class AccountVerificationSerializer(serializers.Serializer):
     """ Account verification Serializer that allows to know which user has a
@@ -57,25 +61,50 @@ class AccountVerificationSerializer(serializers.Serializer):
         user.save()
 
 
-class LoginSerializer(serializers.Serializer):
+class LoginSerializer(serializers.Serializer, ):
     """ Login serializer to make a login to a User """
 
-    database = authentication.Database(settings.SOCIAL_AUTH_AUTH0_DOMAIN)
+    password_less = authentication.Passwordless(settings.SOCIAL_AUTH_AUTH0_DOMAIN)
+    context = {}
 
-    email = serializers.CharField()
-    password = serializers.CharField(min_length=8, max_length=64)
+    code = serializers.CharField()
+
+    @staticmethod
+    def start(data):
+        try:
+            User.objects.get(email=data['email'])
+            response = LoginSerializer.password_less.email(client_id=settings.SOCIAL_AUTH_AUTH0_KEY,
+                                                email=data['email'],
+                                                send='code')
+            if response.get('email_verified'):
+                raise serializers.ValidationError("You are not verified, you cannot login")
+            LoginSerializer.context['email'] = response['email']
+            return "You can go check your email to obtain the authorization code"
+        except User.DoesNotExist:
+            raise PermissionDenied("The user doesn't exist on our database")
 
     def validate(self, data):
         """ Function that makes the validation email-password """
-        self.database.login(client_id=settings.SOCIAL_AUTH_AUTH0_KEY,
-                                        connection=settings.AUTH0_DATABASE_CONNECTION,
-                                        username=data['email'],
-                                        password=data['password'])
-        user = authenticate(email=data['email'], password=data['password'])
-        if not user:
-            raise serializers.ValidationError("The credentials provided are incorrect")
+        print(data)
+        print(self.context)
+        auth_data = {
+            "client_id": settings.SOCIAL_AUTH_AUTH0_KEY,
+            "connection": "email",
+            "email": LoginSerializer.context.get('email'),
+            "verification_code": data['code']
+        }
+        # auth_data["email"] = self.context.get('email')
+        # auth_data['client_id'] = settings.SOCIAL_AUTH_AUTH0_KEY
+        # auth_data['connection'] = "email"
+        response = requests.post(url="https://" + settings.SOCIAL_AUTH_AUTH0_DOMAIN + "/passwordless/verify", data=auth_data)
+
+        if response.text != 'OK':
+            raise serializers.ValidationError(response.json()["error_description"])
+
+        user = User.objects.get(email=LoginSerializer.context.get('email'))
+
         if not user.is_verified:
-            raise serializers.ValidationError("The user is not verified, please check your email")
+            raise PermissionDenied("The user is not verified, please check your email")
 
         self.context['user'] = user
         return data

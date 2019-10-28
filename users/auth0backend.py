@@ -26,7 +26,7 @@ class Auth0(BaseOAuth2):
     def get_user_details(self, response):
         # Obtain JWT and the keys to validate the signature
         id_token = response.get('id_token')
-        print(response)
+        print(id_token)
         jwks = request.urlopen('https://' + self.setting('DOMAIN') + '/.well-known/jwks.json')
         issuer = 'https://' + self.setting('DOMAIN') + '/'
         audience = self.setting('KEY')  # CLIENT_ID
