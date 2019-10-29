@@ -112,13 +112,14 @@ WSGI_APPLICATION = 'tShoes.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        # 'NAME': 'tshoes',
-        # 'USER': 'jpcano1@tshoes-db',
-        # 'PASSWORD': 'tSh03s2503',
-        # 'HOST': 'tshoes-db.postgres.database.azure.com',
-        # 'PORT': '5432'
+        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'tshoes_db',
+        'USER': 'jpcano1',
+        'PASSWORD': 'tShoes123',
+        'HOST': 'localhost',
+        'PORT': ''
     }
 }
 
@@ -184,7 +185,6 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-        'rest_framework.parsers.MultiPartParser',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -225,7 +225,7 @@ else:
 if AUDIENCE:
     SOCIAL_AUTH_AUTH0_AUTH_EXTRA_ARGUMENTS = {'audience': AUDIENCE}
 AUTHENTICATION_BACKENDS = {
-    'users.auth0backend.Auth0',
+    'tShoes.auth0backend.Auth0',
     'django.contrib.auth.backends.ModelBackend'
 }
 

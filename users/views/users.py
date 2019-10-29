@@ -17,7 +17,6 @@ from urllib.parse import urlencode
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.parsers import MultiPartParser
 
 # Models
 from users.models import User
@@ -26,7 +25,8 @@ from users.models import User
 from users.serializers import (UserModelSerializer,
                                UserSignUpSerializer,
                                LoginSerializer,
-                               AccountVerificationSerializer)
+                               AccountVerificationSerializer,
+                               BearerAuth)
 
 def index(request):
     user = request.user
@@ -40,6 +40,7 @@ def email_verified(request):
 
 @login_required
 def dashboard(request):
+    print(request.user)
     user = request.user
     auth0user = user.social_auth.get(provider='auth0')
     userdata = {
@@ -61,7 +62,6 @@ def logout(request):
                  (settings.SOCIAL_AUTH_AUTH0_DOMAIN, settings.SOCIAL_AUTH_AUTH0_KEY, return_to)
     return HttpResponseRedirect(logout_url)
 
-
 class UserViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
                   mixins.ListModelMixin,
@@ -82,6 +82,7 @@ class UserViewSet(viewsets.GenericViewSet,
 
     def list(self, request, *args, **kwargs):
         """ The list mixin view """
+        print(request.user)
         response = super(UserViewSet, self).list(request, *args, **kwargs)
         return response
 

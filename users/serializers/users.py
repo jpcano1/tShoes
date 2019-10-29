@@ -13,6 +13,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.authentication import TokenAuthentication
 
 # Models
 from users.models import User
@@ -33,6 +34,9 @@ from auth0.v2 import authentication
 from auth0.v2.authentication import base
 
 import requests
+
+class BearerAuth(TokenAuthentication):
+    keyword = 'Bearer'
 
 class AccountVerificationSerializer(serializers.Serializer):
     """ Account verification Serializer that allows to know which user has a
@@ -103,7 +107,7 @@ class LoginSerializer(serializers.Serializer, ):
 
         user = User.objects.get(email=LoginSerializer.context.get('email'))
 
-        if not user.is_verified:
+        if user.is_verified:
             raise PermissionDenied("The user is not verified, please check your email")
 
         self.context['user'] = user
