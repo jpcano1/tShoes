@@ -12,3 +12,9 @@ services:
       context: .
       dockerfile: compose/local/django/Dockerfile
     env_file: .envs/.local/.postgres
+
+  auth:
+    build:
+      context: .
+      dockerfile: compose/local/flask/Dockerfile
+    env_file: .envs/.local/.postgres

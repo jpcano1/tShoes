@@ -13,9 +13,9 @@ WORKDIR $WEBAPP_DIR
 ADD tShoes-main $WEBAPP_DIR
 ADD requirements/base.txt $WEBAPP_DIR
 ADD requirements/$DJANGO_ENV.txt $WEBAPP_DIR
-ADD compose/local/django/start $WEBAPP_DIR
-RUN sed -i 's/\r//' start
-RUN chmod +x start
+ADD ./compose/local/django/start /start
+RUN sed -i 's/\r//' /start
+RUN chmod +x /start
 
 # set default environment variables
 ENV PYTHONUNBUFFERED 1

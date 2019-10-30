@@ -6,10 +6,10 @@ class Authtoken:
     """ Class that allows me to handle token storage """
 
     # Host
-    POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
+    POSTGRES_HOST = os.environ.get("DB_HOST")
 
     # Port
-    POSTGRES_PORT = os.environ.get("POSTGRES_PORT")
+    POSTGRES_PORT = os.environ.get("DB_PORT")
 
     # User
     POSTGRES_USER = os.environ.get("POSTGRES_USER")
@@ -26,7 +26,7 @@ class Authtoken:
             :param kwargs: Keyword Arguments
         """
         self.host = self.POSTGRES_HOST
-        self.port = kwargs.get('port')
+        self.port = self.POSTGRES_PORT
         self.user = self.POSTGRES_USER
         self.passwd = self.POSTGRES_PASSWORD
         self.db = self.POSTGRES_DB
