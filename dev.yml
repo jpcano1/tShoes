@@ -6,16 +6,19 @@ services:
       file: base.yml
       service: db
 
-  web:
+  main:
     extends:
       file: base.yml
-      service: web
+      service: main
     build:
       args:
         - DJANGO_ENV=dev
     command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
     volumes:
-      - .:/app
+      - ./tShoes-main:/main_app
     ports:
       - "8000:8000"
     depends_on:

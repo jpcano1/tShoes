@@ -3,16 +3,17 @@ FROM python:3.6
 
 ARG DJANGO_ENV
 
-ENV WEBAPP_DIR /app
+ENV WEBAPP_DIR /main_app
 
 # create and set working directory
 RUN mkdir $WEBAPP_DIR
 WORKDIR $WEBAPP_DIR
 
 # Add current directory code to working directory
-ADD . $WEBAPP_DIR
+ADD tShoes-main $WEBAPP_DIR
 ADD requirements/base.txt $WEBAPP_DIR
 ADD requirements/$DJANGO_ENV.txt $WEBAPP_DIR
+ADD compose/local/django/Dockerfile $WEBAPP_DIR
 
 # set default environment variables
 ENV PYTHONUNBUFFERED 1

@@ -3,12 +3,12 @@ version: "2"
 services:
   db:
     image: postgres
-    env_file: .envs/.postgres
+    env_file: .envs/.local/.postgres
     volumes:
       - db_data:/var/lib/postgresql/data/pgdata
 
-  web:
+  main:
     build:
       context: .
       dockerfile: compose/local/django/Dockerfile
-    env_file: .envs/.postgres
+    env_file: .envs/.local/.postgres
