@@ -13,7 +13,7 @@ services:
     build:
       args:
         - DJANGO_ENV=dev
-    command: python manage.py runserver 0.0.0.0:8000
+    command: start
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
