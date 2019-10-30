@@ -62,6 +62,7 @@ THIRD_PARTY_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'anymail',
+    'social_django',
 ]
 
 LOCAL_APPS = [
@@ -112,11 +113,21 @@ WSGI_APPLICATION = 'tShoes.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
+<<<<<<< HEAD
         'NAME': os.environ.get('POSTGRES_DB'),
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'HOST': os.environ.get('DB_HOST'),
         'PORT': os.environ.get('DB_PORT')
+=======
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'tshoes_db',
+        'USER': 'jpcano1',
+        'PASSWORD': 'tShoes123',
+        'HOST': 'localhost',
+        'PORT': ''
+>>>>>>> security-develop
     }
 }
 
@@ -182,7 +193,6 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-        'rest_framework.parsers.MultiPartParser',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
@@ -194,9 +204,38 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
 }
 
+# Twilio Keys
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
 TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
 FROM_NUMBER = os.environ.get('FROM_NUMBER')
 
+# Nexmo Keys
 NEXMO_ACCOUNT_KEY = os.environ.get('NEXMO_ACCOUNT_KEY')
 NEXMO_ACCOUNT_SECRET = os.environ.get('NEXMO_ACCOUNT_SECRET')
+
+# SOCIAL AUTH AUTH0 BACKEND CONFIG
+SOCIAL_AUTH_TRAILING_SLASH = False
+SOCIAL_AUTH_AUTH0_KEY = os.environ.get('AUTH0_CLIENT_ID')
+SOCIAL_AUTH_AUTH0_SECRET = os.environ.get('AUTH0_CLIENT_SECRET')
+SOCIAL_AUTH_AUTH0_SCOPE = [
+    'openid',
+    'profile',
+    'email'
+]
+SOCIAL_AUTH_AUTH0_DOMAIN = os.environ.get('AUTH0_DOMAIN')
+AUTH0_DATABASE_CONNECTION = os.environ.get('AUTH0_DATABASE_CONNECTION')
+AUDIENCE = None
+if os.environ.get('AUTH0_AUDIENCE'):
+    AUDIENCE = os.environ.get('AUTH0_AUDIENCE')
+else:
+    if SOCIAL_AUTH_AUTH0_DOMAIN:
+        AUDIENCE = 'https://' + SOCIAL_AUTH_AUTH0_DOMAIN + '/userinfo'
+if AUDIENCE:
+    SOCIAL_AUTH_AUTH0_AUTH_EXTRA_ARGUMENTS = {'audience': AUDIENCE}
+AUTHENTICATION_BACKENDS = {
+    'tShoes.auth0backend.Auth0',
+    'django.contrib.auth.backends.ModelBackend'
+}
+
+LOGIN_URL = '/login/auth0'
+LOGIN_REDIRECT_URL = '/dashboard'

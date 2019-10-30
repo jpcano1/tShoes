@@ -1,5 +1,18 @@
 """ User views """
 
+# Django
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.contrib.auth import logout as log_out
+
+# Json
+import json
+
+# Urllib
+from urllib.parse import urlencode
+
 # Django rest framework
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
@@ -12,7 +25,42 @@ from users.models import User
 from users.serializers import (UserModelSerializer,
                                UserSignUpSerializer,
                                LoginSerializer,
-                               AccountVerificationSerializer)
+                               AccountVerificationSerializer,
+                               BearerAuth)
+
+def index(request):
+    user = request.user
+    if user.is_authenticated:
+        return redirect(dashboard)
+    else:
+        return render(request, 'auth/index.html')
+
+def email_verified(request):
+    return render(request, 'auth/verification.html')
+
+@login_required
+def dashboard(request):
+    print(request.user)
+    user = request.user
+    auth0user = user.social_auth.get(provider='auth0')
+    userdata = {
+        'user_id': auth0user.uid,
+        'name': user.first_name,
+        'picture': auth0user.extra_data['picture'],
+        'email': auth0user.extra_data['email'],
+    }
+
+    return render(request, 'auth/dashboard.html', {
+        'auth0User': auth0user,
+        'userdata': json.dumps(userdata, indent=4)
+    })
+
+def logout(request):
+    log_out(request)
+    return_to = urlencode({'returnTo': request.build_absolute_uri('/')})
+    logout_url = 'https://%s/v2/logout?client_id=%s&%s' % \
+                 (settings.SOCIAL_AUTH_AUTH0_DOMAIN, settings.SOCIAL_AUTH_AUTH0_KEY, return_to)
+    return HttpResponseRedirect(logout_url)
 
 class UserViewSet(viewsets.GenericViewSet,
                   mixins.CreateModelMixin,
@@ -34,6 +82,7 @@ class UserViewSet(viewsets.GenericViewSet,
 
     def list(self, request, *args, **kwargs):
         """ The list mixin view """
+        print(request.user)
         response = super(UserViewSet, self).list(request, *args, **kwargs)
         return response
 
@@ -58,7 +107,17 @@ class UserViewSet(viewsets.GenericViewSet,
     @action(detail=False, methods=['post'])
     def login(self, request):
         """
+            Login Method passwordless
+            :param request: The request done by the user
+            :return: The response of the request
+        """
+        serializer = LoginSerializer.start(data=request.data)
+        return Response(serializer, status=status.HTTP_201_CREATED)
 
+    @action(detail=False, methods=['post'])
+    def code_verify(self, request):
+        """
+            Verifies the email and the auth code are correct
             :param request:
             :return:
         """
@@ -66,7 +125,7 @@ class UserViewSet(viewsets.GenericViewSet,
         serializer.is_valid(raise_exception=True)
         user, token = serializer.save()
         data = {
-            'user': UserModelSerializer(user).data,
-            'access_token': token
+            "user": UserModelSerializer(user).data,
+            "access_token": token
         }
-        return Response(data, status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_200_OK)

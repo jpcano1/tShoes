@@ -6,11 +6,14 @@ from django.contrib.auth import authenticate, password_validation
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 
 # Django Rest Framework models
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.authentication import TokenAuthentication
 
 # Models
 from users.models import User
@@ -23,11 +26,17 @@ from jose import *
 from django.utils import timezone
 from datetime import timedelta
 
-# Twilio messages
-from twilio.rest import Client
-
 # Nexmo Messages
 from nexmo import *
+
+# Auth0 Dependencies
+from auth0.v2 import authentication
+from auth0.v2.authentication import base
+
+import requests
+
+class BearerAuth(TokenAuthentication):
+    keyword = 'Bearer'
 
 class AccountVerificationSerializer(serializers.Serializer):
     """ Account verification Serializer that allows to know which user has a
@@ -56,19 +65,50 @@ class AccountVerificationSerializer(serializers.Serializer):
         user.save()
 
 
-class LoginSerializer(serializers.Serializer):
+class LoginSerializer(serializers.Serializer, ):
     """ Login serializer to make a login to a User """
 
-    email = serializers.CharField()
-    password = serializers.CharField(min_length=8, max_length=64)
+    password_less = authentication.Passwordless(settings.SOCIAL_AUTH_AUTH0_DOMAIN)
+    context = {}
+
+    code = serializers.CharField()
+
+    @staticmethod
+    def start(data):
+        try:
+            User.objects.get(email=data['email'])
+            response = LoginSerializer.password_less.email(client_id=settings.SOCIAL_AUTH_AUTH0_KEY,
+                                                email=data['email'],
+                                                send='code')
+            if response.get('email_verified'):
+                raise serializers.ValidationError("You are not verified, you cannot login")
+            LoginSerializer.context['email'] = response['email']
+            return "You can go check your email to obtain the authorization code"
+        except User.DoesNotExist:
+            raise PermissionDenied("The user doesn't exist on our database")
 
     def validate(self, data):
         """ Function that makes the validation email-password """
-        user = authenticate(email=data['email'], password=data['password'])
-        if not user:
-            raise serializers.ValidationError("The credentials provided are incorrect")
-        if not user.is_verified:
-            raise serializers.ValidationError("The user is not verified, please check your email")
+        print(data)
+        print(self.context)
+        auth_data = {
+            "client_id": settings.SOCIAL_AUTH_AUTH0_KEY,
+            "connection": "email",
+            "email": LoginSerializer.context.get('email'),
+            "verification_code": data['code']
+        }
+        # auth_data["email"] = self.context.get('email')
+        # auth_data['client_id'] = settings.SOCIAL_AUTH_AUTH0_KEY
+        # auth_data['connection'] = "email"
+        response = requests.post(url="https://" + settings.SOCIAL_AUTH_AUTH0_DOMAIN + "/passwordless/verify", data=auth_data)
+
+        if response.text != 'OK':
+            raise serializers.ValidationError(response.json()["error_description"])
+
+        user = User.objects.get(email=LoginSerializer.context.get('email'))
+
+        if user.is_verified:
+            raise PermissionDenied("The user is not verified, please check your email")
 
         self.context['user'] = user
         return data
@@ -82,6 +122,7 @@ class UserSignUpSerializer(serializers.Serializer):
     """ Class that allows us to create users and to send
         verification token to the user through the email.
     """
+    database = authentication.Database(domain=settings.SOCIAL_AUTH_AUTH0_DOMAIN)
 
      # Username of the user
     username = serializers.CharField(
@@ -139,8 +180,16 @@ class UserSignUpSerializer(serializers.Serializer):
         return data
 
     def create(self, data):
-        """  """
+        """
+
+        :param data:
+        :return:
+        """
         data.pop('password_confirmation')
+        self.database.signup(client_id=settings.SOCIAL_AUTH_AUTH0_KEY,
+                             email=data['email'],
+                             password=data['password'],
+                             connection=settings.AUTH0_DATABASE_CONNECTION)
         user = User.objects.create_user(**data)
         self.send_confirmation_email(user)
         return user
