@@ -1,7 +1,0 @@
-# Auth0 Variables
-API_BASE_URL="https://dev-9sgdpaff.auth0.com"
-ACCESS_TOKEN_URL="https://dev-9sgdpaff.auth0.com/oauth/token"
-AUTHORIZE_URL="https://dev-9sgdpaff.auth0.com/authorize"
-REDIRECT_URI="http://localhost:5555/callback"
-CLIENT_SECRET="cVbUhz1PosdBeAyOhA8EZ18Y0OxO1eVplucb7xpr9-89jXLlvk9p1MmAfL9udKGi"
-CLIENT_ID="ZJI7LxM6T0VJ0PpXdFlaCSrkDK7xy7BD"
