@@ -1,6 +1,6 @@
 venv
 db.sqlite3
-/.vscode
+.vscode
 /__pycache__
 env.sh
 .idea
