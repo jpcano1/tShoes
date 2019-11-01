@@ -29,18 +29,28 @@ from reference.serializers import ItemModelSerializer
 from bill.serializers import CreateBillSerializer, BillModelSerializer
 
 # Permissions
-from ..permissions import (IsCustomer, IsOrderOwner, IsItemOwner)
-from rest_framework.permissions import IsAuthenticated
+from ..permissions import (IsCustomer,
+                           IsOrderOwner,
+                           IsItemOwner,
+                           IsAccountOwner)
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 class CustomerViewSet(viewsets.GenericViewSet,
                       mixins.CreateModelMixin,
-                      mixins.ListModelMixin,
                       mixins.RetrieveModelMixin,
                       mixins.DestroyModelMixin):
     """ Customer viewset, here is where the CRUD of the customer is developed """
     queryset = Customer.objects.all()
     serializer_class = CustomerModelSerializer
     lookup_field = 'id'
+
+    def get_permissions(self):
+        permissions = []
+        if self.action in ['create']:
+            permissions = [AllowAny]
+        elif self.action in ['update', 'partial_update', 'retrieve']:
+            permissions = [IsAccountOwner]
+        return [p() for p in permissions]
 
     def create(self, request, *args, **kwargs):
         """ Documentar """
