@@ -1,34 +1,33 @@
-""" Designers permissions """
+"""  """
+
+# Models
+from ..models import Customer
 
 # Django rest framework
 from rest_framework.permissions import BasePermission
 
-# Models
-from ..models import Designer
-
-class IsDesigner(BasePermission):
-    """ Class that represents the validations of the designer """
+class IsCustomer(BasePermission):
+    """  """
 
     def has_permission(self, request, view):
+        """
+
+            :param request:
+            :param view:
+            :return:
+        """
         try:
-            Designer.objects.get(id=request.user.id)
+            Customer.objects.get(id=request.user.id)
             if request.user.is_verified:
                 return True
             else:
                 return False
-        except Designer.DoesNotExist:
+        except Customer.DoesNotExist:
             return False
 
-class IsInventoryOwner(BasePermission):
-    """ Class that validates the requesting user is the owner of the inventory """
-
-    def has_object_permission(self, request, view, obj):
-        if request.user.id == obj.designer.id:
-            return True
-        return False
-
-class IsReferenceOwner(BasePermission):
+class IsOrderOwner(BasePermission):
     """  """
+
     def has_object_permission(self, request, view, obj):
         """
 
@@ -37,6 +36,21 @@ class IsReferenceOwner(BasePermission):
             :param obj:
             :return:
         """
-        if request.user.id == obj.inventory.designer.id:
+        if obj.customer.id == request.user.id:
+            return True
+        return False
+
+class IsItemOwner(BasePermission):
+    """  """
+
+    def has_object_permission(self, request, view, obj):
+        """
+
+            :param request:
+            :param view:
+            :param obj:
+            :return:
+        """
+        if obj.order.customer.id == request.user.id:
             return True
         return False

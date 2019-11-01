@@ -28,6 +28,10 @@ from reference.serializers import ItemModelSerializer
 # Bill Serializers
 from bill.serializers import CreateBillSerializer, BillModelSerializer
 
+# Permissions
+from ..permissions import (IsCustomer, IsOrderOwner, IsItemOwner)
+from rest_framework.permissions import IsAuthenticated
+
 class CustomerViewSet(viewsets.GenericViewSet,
                       mixins.CreateModelMixin,
                       mixins.ListModelMixin,
@@ -49,12 +53,23 @@ class CustomerViewSet(viewsets.GenericViewSet,
 class CustomerOrderViewSet(viewsets.GenericViewSet,
                            mixins.ListModelMixin,
                            mixins.RetrieveModelMixin,
-                           mixins.DestroyModelMixin):
+                           mixins.DestroyModelMixin,
+                           mixins.UpdateModelMixin):
     """ Customer - Order viewset """
 
     queryset = Order.objects.all()
     serializer_class = OrderModelSerializer
     lookup_field = 'id'
+
+    def get_permissions(self):
+        """ Definir permisos para lista y para compra """
+        permissions = [IsCustomer, IsAuthenticated]
+        if self.action in ['retrieve',
+                           'update',
+                           'partial_update',
+                           'destroy']:
+            permissions.append(IsOrderOwner)
+        return [p() for p in permissions]
 
     def dispatch(self, request, *args, **kwargs):
         customer_id = kwargs['customer']
@@ -97,6 +112,14 @@ class CustomerItemViewSet(viewsets.GenericViewSet,
     serializer_class = ItemModelSerializer
     lookup_field = 'id'
     pagination_class = LimitOffsetPagination
+
+    def get_permissions(self):
+        """ Definir permisos para lista """
+        permissions = [IsAuthenticated, IsCustomer]
+        if self.action in ['retrieve', 'update', 'destroy', 'partial_update']:
+            permissions.append(IsItemOwner)
+        return [p() for p in permissions]
+
 
     def dispatch(self, request, *args, **kwargs):
         customer_id = kwargs['customer']

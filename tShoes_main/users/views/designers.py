@@ -123,6 +123,8 @@ class DesignerReferenceViewSet(viewsets.GenericViewSet,
         permissions = [IsAuthenticated, IsDesigner]
         if self.action in ['update', 'destroy', 'partial_update']:
             permissions.append(IsReferenceOwner)
+        elif self.action in ['list']:
+            permissions = [AllowAny]
         return [p() for p in permissions]
 
     def dispatch(self, request, *args, **kwargs):
