@@ -15,4 +15,4 @@ class IsAccountOwner(permissions.BasePermission):
             :return: A boolean that determines whether
             the requesting user has access or not
         """
-        return request.user == obj
+        return request.user.id == obj.id

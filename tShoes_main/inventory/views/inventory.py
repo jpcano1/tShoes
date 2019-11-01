@@ -4,10 +4,10 @@
 from  rest_framework import mixins, viewsets
 
 # Models
-from inventory.models import Inventory
+from ..models import Inventory
 
 # Serializers
-from inventory.serializers import InventoryModelSerializer
+from ..serializers import InventoryModelSerializer
 
 class InventoryViewSet(viewsets.GenericViewSet,
                        mixins.ListModelMixin,
