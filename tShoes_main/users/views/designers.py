@@ -52,8 +52,14 @@ class DesignersViewSet(viewsets.GenericViewSet,
         return [p() for p in permissions]
 
     def create(self, request, *args, **kwargs):
-        """ Sends the information to the serializer to make the respective
-         verification of the data and then the creation """
+        """
+            Sends the information to the serializer to make the respective
+            verification of the data and then the creation
+            :param request:
+            :param args:
+            :param kwargs:
+            :return:
+        """
         serializer = DesignerSignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         designer = serializer.save()
