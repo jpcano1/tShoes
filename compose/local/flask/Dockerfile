@@ -5,12 +5,15 @@ ARG FLASK_ENV
 
 ENV WEBAPP_DIR /auth_app
 
+ENV FLASK_APP server.py
+ENV FLASK_RUN_HOST 0.0.0.0
+
 # create and set working directory
 RUN mkdir $WEBAPP_DIR
 WORKDIR $WEBAPP_DIR
 
 # Add Current directory to working directory
-ADD tShoes-main $WEBAPP_DIR
+ADD tShoes_main $WEBAPP_DIR
 ADD requirements/base.txt $WEBAPP_DIR
 ADD requirements/$FLASK_ENV.txt $WEBAPP_DIR
 
@@ -37,3 +40,5 @@ RUN pip3 install --upgrade pip
 
 # Install project dependencies
 RUN pip3 install -r $FLASK_ENV.txt
+
+CMD ["flask", "run"]

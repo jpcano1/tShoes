@@ -1,7 +1,8 @@
 .idea
 db.sqlite3
-/.vscode
+.vscode
 /__pycache__
 env.sh
-tShoes-auth/__pycache__/
+tShoes_auth/__pycache__/
 .envs
+venv

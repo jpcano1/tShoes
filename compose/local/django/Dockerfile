@@ -10,7 +10,7 @@ RUN mkdir $WEBAPP_DIR
 WORKDIR $WEBAPP_DIR
 
 # Add current directory code to working directory
-ADD tShoes-main $WEBAPP_DIR
+ADD tShoes_main $WEBAPP_DIR
 ADD requirements/base.txt $WEBAPP_DIR
 ADD requirements/$DJANGO_ENV.txt $WEBAPP_DIR
 ADD ./compose/local/django/start /start
