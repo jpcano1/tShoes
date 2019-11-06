@@ -102,7 +102,7 @@ def dashboard():
 @app.route('/logout/')
 def logout():
     """ Log out processing """
-    id = session['profile']['id']
+    id = session.get('profile').get('id')
     token_conn.delete_authtoken(id)
     # Clear session stored data
     session.clear()
@@ -121,5 +121,6 @@ if __name__ == '__main__':
     #                               password=POSTGRES_PASSWORD)
     # cur = connection.cursor()
     token_conn = Authtoken()
+    print(token_conn)
     app.run(debug=True, host='0.0.0.0', port=5555)
 

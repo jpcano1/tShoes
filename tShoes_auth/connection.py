@@ -74,13 +74,22 @@ class Authtoken:
             :param token: The token asociated to the user_id
         """
         date = datetime.datetime.now()
-        self.cursor.execute(f"INSERT INTO authtoken_token (key, created, user_id) VALUES ('{token}', TIMESTAMP WITH TIME ZONE '{date}', '{user_id}')")
+        existing_token = self.fetch_authtoken_from_id(user_id)
+        if existing_token:
+            # If there exists an authtoken from another session, it replaces it
+            self.update_auth_token(user_id, token, date)
+        else:
+            self.cursor.execute(f"INSERT INTO authtoken_token (key, created, user_id) VALUES ('{token}', TIMESTAMP WITH TIME ZONE '{date}', '{user_id}')")
+            self.conn.commit()
+    
+    def update_auth_token(self, user_id, token, created):
+        self.cursor.execute(f"UPDATE authtoken_token SET key='{token}', created= TIMESTAMP WITH TIME ZONE '{created}' WHERE user_id='{user_id}'")
         self.conn.commit()
 
     def delete_authtoken(self, user_id):
         """
             Deletes the token after the user logs out
-         """
+        """
         self.cursor.execute(f"DELETE FROM authtoken_token WHERE user_id = '{user_id}'")
         self.conn.commit()
 
