@@ -115,11 +115,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME': 'tshoes_db',
-        'USER': 'jpcano1',
-        'PASSWORD': 'tShoes123',
-        'HOST': 'localhost',
-        'PORT': ''
+        'NAME': env('POSTGRES_DB'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
+        'HOST': env('POSTGRES_HOST'),
+        'PORT': env('POSTGRES_PORT')
     }
 }
 
