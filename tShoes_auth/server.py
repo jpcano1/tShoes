@@ -35,6 +35,7 @@ REDIRECT_URI=os.environ.get("REDIRECT_URI")
 app = Flask(__name__)
 app.secret_key = CLIENT_SECRET
 oauth = OAuth(app)
+token_conn = Authtoken()
 
 auth0 = oauth.register(
     'auth0',
@@ -117,6 +118,5 @@ def home():
     return render_template('home.html')
 
 if __name__ == '__main__':
-    token_conn = Authtoken()
     app.run(debug=True, host='0.0.0.0', port=5000)
 

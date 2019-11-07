@@ -20,7 +20,7 @@ class Authtoken:
     # Database
     POSTGRES_DB = os.environ.get("POSTGRES_DB")
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         """
             Constructor class
             :param kwargs: Keyword Arguments
