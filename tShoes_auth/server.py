@@ -67,6 +67,7 @@ def callback_handling():
     # Email and access_token from session
     email = session['profile']['email']
     access_token = session['profile']['access_token']
+
     try:
         # Retrieves user's id form email
         id = token_conn.fetch_user_by_email(email)
@@ -117,10 +118,5 @@ def home():
     return render_template('home.html')
 
 if __name__ == '__main__':
-    # connection = psycopg2.connect(dbname=POSTGRES_DB,
-    #                               user=POSTGRES_USER, host=POSTGRES_HOST,
-    #                               password=POSTGRES_PASSWORD)
-    # cur = connection.cursor()
-    token_conn = Authtoken()
     app.run(debug=True, host='0.0.0.0', port=5000)
 

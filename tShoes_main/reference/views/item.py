@@ -6,6 +6,7 @@
 from rest_framework import mixins, viewsets, status
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
+from rest_framework.permissions import IsAuthenticated
 
 # Reference models
 from ..models import Reference
@@ -16,16 +17,20 @@ from ..models import Item
 # Item serializer
 from ..serializers import ItemModelSerializer, AddItemSerializer
 
+# Permissions
+from users.permissions import (IsCustomer)
+
 class ItemViewSet(viewsets.GenericViewSet,
-                  mixins.ListModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.DestroyModelMixin):
+                  mixins.CreateModelMixin):
     """ Item Viewset """
 
     queryset = Item.objects.all()
     serializer_class = ItemModelSerializer
     lookup_field = 'id'
+
+    def get_permissions(self):
+        permissions = [IsCustomer, IsAuthenticated]
+        return [p() for p in permissions]
 
     def dispatch(self, request, *args, **kwargs):
         """
@@ -64,19 +69,3 @@ class ItemViewSet(viewsets.GenericViewSet,
         # Serializes object
         data = ItemModelSerializer(item).data
         return Response(data, status=status.HTTP_201_CREATED)
-
-    def destroy(self, request, *args, **kwargs):
-        """
-            ** Terminar de validar **
-            Deletes de detail of the selected item in the request url
-            :param request: The request done by the user
-            :param args: Some arguments carried on the request
-            :param kwargs: Some keyword arguments carried on the request
-            :return: The response status
-        """
-        item = get_object_or_404(Item, id=kwargs['id'])
-        order = item.order
-        item.delete()
-        if order.references.count() == 0:
-            order.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)

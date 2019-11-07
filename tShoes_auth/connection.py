@@ -6,10 +6,10 @@ class Authtoken:
     """ Class that allows me to handle token storage """
 
     # Host
-    POSTGRES_HOST = os.environ.get("DB_HOST")
+    POSTGRES_HOST = os.environ.get("POSTGRES_HOST")
 
     # Port
-    POSTGRES_PORT = os.environ.get("DB_PORT")
+    POSTGRES_PORT = os.environ.get("POSTGRES_PORT")
 
     # User
     POSTGRES_USER = os.environ.get("POSTGRES_USER")
@@ -20,7 +20,7 @@ class Authtoken:
     # Database
     POSTGRES_DB = os.environ.get("POSTGRES_DB")
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         """
             Constructor class
             :param kwargs: Keyword Arguments
@@ -67,6 +67,16 @@ class Authtoken:
         rows = self.cursor.fetchall()
         return rows
 
+    def fetch_authtoken_from_id(self, id):
+        """
+            Retrieves authtoken from user's id
+            :param id: The id of the user
+            :return: The token retrieved as a tuple
+        """
+        self.cursor.execute(f"SELECT * FROM authtoken_token WHERE user_id = {id}")
+        row = self.cursor.fetchone()
+        return row
+
     def insert_authtoken(self, user_id, token):
         """
             Creates token in database
@@ -79,9 +89,10 @@ class Authtoken:
             # If there exists an authtoken from another session, it replaces it
             self.update_auth_token(user_id, token, date)
         else:
+            # Else, it creates it
             self.cursor.execute(f"INSERT INTO authtoken_token (key, created, user_id) VALUES ('{token}', TIMESTAMP WITH TIME ZONE '{date}', '{user_id}')")
             self.conn.commit()
-    
+
     def update_auth_token(self, user_id, token, created):
         self.cursor.execute(f"UPDATE authtoken_token SET key='{token}', created= TIMESTAMP WITH TIME ZONE '{created}' WHERE user_id='{user_id}'")
         self.conn.commit()
@@ -89,17 +100,7 @@ class Authtoken:
     def delete_authtoken(self, user_id):
         """
             Deletes the token after the user logs out
-        """
+         """
         self.cursor.execute(f"DELETE FROM authtoken_token WHERE user_id = '{user_id}'")
         self.conn.commit()
-
-    def fetch_authtoken_from_id(self, id):
-        """
-            Retrieves authtoken from user's id
-            :param id: The id of the user
-            :return: The token retrieved as a tuple
-        """
-        self.cursor.execute(f"SELECT * FROM authtoken_token WHERE user_id = {id}")
-        row = self.cursor.fetchone()
-        return row
 

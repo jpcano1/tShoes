@@ -4,10 +4,10 @@
 from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
-from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 # User Serializers
-from users.serializers import (DesignerSignUpSerializer,
+from ..serializers import (DesignerSignUpSerializer,
                                DesignerModelSerializer)
 
 # Inventory Serializers
@@ -27,8 +27,13 @@ from inventory.models import Inventory
 # Reference models
 from reference.models import Reference
 
+# Permissions
+from ..permissions import (IsAccountOwner,
+                           IsDesigner,
+                           IsInventoryOwner,
+                           IsReferenceOwner)
+
 class DesignersViewSet(viewsets.GenericViewSet,
-                       mixins.ListModelMixin,
                        mixins.CreateModelMixin,
                        mixins.DestroyModelMixin,
                        mixins.RetrieveModelMixin):
@@ -38,9 +43,23 @@ class DesignersViewSet(viewsets.GenericViewSet,
     serializer_class = DesignerModelSerializer
     lookup_field = 'id'
 
+    def get_permissions(self):
+        permissions = []
+        if self.action in ['create']:
+            permissions = [AllowAny]
+        elif self.action in ['retrieve', 'update', 'partial_update']:
+            permissions = [IsAccountOwner]
+        return [p() for p in permissions]
+
     def create(self, request, *args, **kwargs):
-        """ Sends the information to the serializer to make the respective
-         verification of the data and then the creation """
+        """
+            Sends the information to the serializer to make the respective
+            verification of the data and then the creation
+            :param request:
+            :param args:
+            :param kwargs:
+            :return:
+        """
         serializer = DesignerSignUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         designer = serializer.save()
@@ -48,13 +67,18 @@ class DesignersViewSet(viewsets.GenericViewSet,
         return Response(data, status=status.HTTP_201_CREATED)
 
 class DesignerInventoryViewSet(viewsets.GenericViewSet,
-                               mixins.ListModelMixin,
                                mixins.CreateModelMixin,
                                mixins.RetrieveModelMixin,):
     """ The viewset to CRUD and inventory from a specific designer """
 
     serializer_class = InventoryModelSerializer
     queryset = Inventory.objects.all()
+
+    def get_permissions(self):
+        permissions = [IsAuthenticated, IsDesigner]
+        if self.action in ['retrieve']:
+            permissions.append(IsInventoryOwner)
+        return [p() for p in permissions]
 
     def dispatch(self, request, *args, **kwargs):
         """ obtains the designer from the keyword 'designer' in the url """
@@ -99,7 +123,15 @@ class DesignerReferenceViewSet(viewsets.GenericViewSet,
 
     queryset = Reference.objects.all()
     serializer_class = ReferenceModelSerializer
-    lookup_field = 'id'
+    lookup_field = 'pk'
+
+    def get_permissions(self):
+        permissions = [IsAuthenticated, IsDesigner]
+        if self.action in ['update', 'destroy', 'partial_update']:
+            permissions.append(IsReferenceOwner)
+        elif self.action in ['list']:
+            permissions = [AllowAny]
+        return [p() for p in permissions]
 
     def dispatch(self, request, *args, **kwargs):
         """ Retrieves the desginer and its respective inventory """
