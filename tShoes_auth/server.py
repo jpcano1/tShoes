@@ -35,6 +35,7 @@ REDIRECT_URI=os.environ.get("REDIRECT_URI")
 app = Flask(__name__)
 app.secret_key = CLIENT_SECRET
 oauth = OAuth(app)
+token_conn = Authtoken()
 
 auth0 = oauth.register(
     'auth0',
@@ -121,6 +122,5 @@ if __name__ == '__main__':
     #                               password=POSTGRES_PASSWORD)
     # cur = connection.cursor()
     token_conn = Authtoken()
-    print(token_conn)
     app.run(debug=True, host='0.0.0.0', port=5000)
 

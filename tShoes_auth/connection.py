@@ -93,3 +93,13 @@ class Authtoken:
         self.cursor.execute(f"DELETE FROM authtoken_token WHERE user_id = '{user_id}'")
         self.conn.commit()
 
+    def fetch_authtoken_from_id(self, id):
+        """
+            Retrieves authtoken from user's id
+            :param id: The id of the user
+            :return: The token retrieved as a tuple
+        """
+        self.cursor.execute(f"SELECT * FROM authtoken_token WHERE user_id = {id}")
+        row = self.cursor.fetchone()
+        return row
+
