@@ -16,3 +16,16 @@ class IsAccountOwner(permissions.BasePermission):
             the requesting user has access or not
         """
         return request.user.id == obj.id
+
+class IsVerified(permissions.BasePermission):
+    """ Allows to validate the requesting user is verified """
+
+    def has_permission(self, request, view):
+        """
+            Validates the requesting user is verified
+            :param request: The request object
+            :param view: the view which is requesting the permission
+            :return: A boolean that determines whether
+            the requesting user has access or not
+        """
+        return request.user.is_verified
