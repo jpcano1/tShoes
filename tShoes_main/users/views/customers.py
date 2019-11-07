@@ -32,7 +32,8 @@ from bill.serializers import CreateBillSerializer, BillModelSerializer
 from ..permissions import (IsCustomer,
                            IsOrderOwner,
                            IsItemOwner,
-                           IsAccountOwner)
+                           IsAccountOwner,
+                           IsVerified)
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 class CustomerViewSet(viewsets.GenericViewSet,
@@ -49,7 +50,9 @@ class CustomerViewSet(viewsets.GenericViewSet,
         if self.action in ['create']:
             permissions = [AllowAny]
         elif self.action in ['update', 'partial_update', 'retrieve']:
-            permissions = [IsAccountOwner]
+            permissions = [IsAccountOwner,
+                           IsVerified,
+                           IsAuthenticated]
         return [p() for p in permissions]
 
     def create(self, request, *args, **kwargs):
@@ -72,12 +75,16 @@ class CustomerOrderViewSet(viewsets.GenericViewSet,
     lookup_field = 'id'
 
     def get_permissions(self):
-        """ Definir permisos para lista y para compra """
-        permissions = [IsCustomer, IsAuthenticated]
+        """
+             Definir permisos para lista y para compra
+            :return: El permiso asociado a la petición respectiva.
+        """
+        permissions = [IsCustomer, IsAuthenticated, IsVerified]
         if self.action in ['retrieve',
                            'update',
                            'partial_update',
-                           'destroy']:
+                           'destroy',
+                           'place']:
             permissions.append(IsOrderOwner)
         return [p() for p in permissions]
 
@@ -87,6 +94,13 @@ class CustomerOrderViewSet(viewsets.GenericViewSet,
         return super(CustomerOrderViewSet, self).dispatch(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
+        """
+            Retrieves the list of customers
+            :param request: the request object
+            :param args: the arguments of the request
+            :param kwargs: the keyword arguments
+            :return: The list of customers
+        """
         customer = self.customer
         orders = Order.objects.filter(customer=customer)
         data = OrderModelSerializer(orders, many=True).data
@@ -110,7 +124,6 @@ class CustomerOrderViewSet(viewsets.GenericViewSet,
         data = BillModelSerializer(bill).data
         return Response(data, status=status.HTTP_201_CREATED)
 
-
 class CustomerItemViewSet(viewsets.GenericViewSet,
                           mixins.ListModelMixin,
                           mixins.RetrieveModelMixin,
@@ -125,7 +138,7 @@ class CustomerItemViewSet(viewsets.GenericViewSet,
 
     def get_permissions(self):
         """ Definir permisos para lista """
-        permissions = [IsAuthenticated, IsCustomer]
+        permissions = [IsAuthenticated, IsCustomer, IsVerified]
         if self.action in ['retrieve', 'update', 'destroy', 'partial_update']:
             permissions.append(IsItemOwner)
         return [p() for p in permissions]
@@ -154,3 +167,11 @@ class CustomerItemViewSet(viewsets.GenericViewSet,
         serializer.save()
         data = ItemModelSerializer(item).data
         return Response(data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        item = get_object_or_404(Item, id=kwargs['id'])
+        order = item.order
+        item.delete()
+        if order.references.count() == 0:
+            order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

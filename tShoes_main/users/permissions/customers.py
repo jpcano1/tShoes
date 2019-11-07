@@ -3,6 +3,8 @@
 # Models
 from ..models import Customer
 
+from order.models import Order
+
 # Django rest framework
 from rest_framework.permissions import BasePermission
 
@@ -26,15 +28,26 @@ class IsCustomer(BasePermission):
             return False
 
 class IsOrderOwner(BasePermission):
-    """  """
+    """ This class allows me to verify the requesting user is the owner of
+     the order """
+
+    def has_permission(self, request, view):
+        try:
+            order_id = view.kwargs.get('id')
+            user_id = view.kwargs.get('customer')
+            Order.objects.get(id=order_id, customer=user_id)
+            return True
+        except Order.DoesNotExist:
+            return False
 
     def has_object_permission(self, request, view, obj):
         """
-
-            :param request:
-            :param view:
-            :param obj:
-            :return:
+            Verifies the access over the object requested
+            :param request: The object request
+            :param view: The view from which the request is comming
+            :param obj: The requested object
+            :return: A boolean that determines
+            whether the user is allowed or not
         """
         if obj.customer.id == request.user.id:
             return True
@@ -51,7 +64,7 @@ class IsItemOwner(BasePermission):
             :param view: The view from which the request is comming
             :param obj: The requested object
             :return: A boolean that determines
-            wheter the user is allowed or not
+            whether the user is allowed or not
         """
         if obj.order.customer.id == request.user.id:
             return True
