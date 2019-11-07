@@ -1,7 +1,8 @@
 venv
 db.sqlite3
 .vscode
-/__pycache__
+__pycache__
 env.sh
+*.sh
 .idea
-envs
+.envs
