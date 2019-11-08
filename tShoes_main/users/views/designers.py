@@ -131,6 +131,8 @@ class DesignerReferenceViewSet(viewsets.GenericViewSet,
             permissions.append(IsReferenceOwner)
         elif self.action in ['list']:
             permissions = [AllowAny]
+        elif self.action in ['create']:
+            permissions.append(IsInventoryOwner)
         return [p() for p in permissions]
 
     def dispatch(self, request, *args, **kwargs):

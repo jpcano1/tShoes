@@ -6,6 +6,8 @@ from rest_framework.permissions import BasePermission
 # Models
 from ..models import Designer
 
+from inventory.models import Inventory
+
 class IsDesigner(BasePermission):
     """ Class that represents the validations of the designer """
 
@@ -21,6 +23,14 @@ class IsDesigner(BasePermission):
 
 class IsInventoryOwner(BasePermission):
     """ Class that validates the requesting user is the owner of the inventory """
+
+    def has_permission(self, request, view):
+        inventory = view.kwargs.get('inventory')
+        try:
+            Inventory.objects.get(id=inventory, designer=request.user.id)
+            return True
+        except Inventory.DoesNotExist:
+            return False
 
     def has_object_permission(self, request, view, obj):
         if request.user.id == obj.designer.id:
