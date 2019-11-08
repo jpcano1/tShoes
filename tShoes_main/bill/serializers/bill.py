@@ -57,10 +57,11 @@ class CreateBillSerializer(serializers.Serializer):
         order.status = 1
         order.save()
         bill = Bill.objects.create(order=order, total_price=total)
-        self.send_order_confirmation(bill)
+        # self.send_order_confirmation(bill)
         return bill
 
-    def send_order_confirmation(self, bill):
+    @staticmethod
+    def send_order_confirmation(bill):
         """
             Sends the verification of the order
             :param bill: the bill to be sent
