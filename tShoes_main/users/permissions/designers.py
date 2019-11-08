@@ -25,7 +25,7 @@ class IsInventoryOwner(BasePermission):
     """ Class that validates the requesting user is the owner of the inventory """
 
     def has_permission(self, request, view):
-        inventory = view.kwargs.get('inventory')
+        inventory = view.kwargs.get('inventory') if view.kwargs.get('inventory') else view.kwargs.get('pk')
         try:
             Inventory.objects.get(id=inventory, designer=request.user.id)
             return True
